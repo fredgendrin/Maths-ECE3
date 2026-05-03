@@ -309,12 +309,12 @@ if (!getKey()) {
 // EXAMS STORE
 // ══════════════════════════════════════
 var exams = [];
-const saveExams = () => localStorage.setItem(EXAMS_STORE, JSON.stringify(exams));
+var saveExams = () => localStorage.setItem(EXAMS_STORE, JSON.stringify(exams));
 
 // ══════════════════════════════════════
 // SESSION STATE
 // ══════════════════════════════════════
-let S = {
+var S = {
   currentExam: null,   // { id, number, title, exercises, focusSkills, generated }
   photoB64: null,
   photoMime: null,
