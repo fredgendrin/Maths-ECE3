@@ -357,7 +357,13 @@ function saveKey() {
     init();
   });
 }
-if (getKey()) document.getElementById('setupWrap').style.display = 'none';
+if (getKey()) {
+  document.getElementById('setupWrap').style.display = 'none';
+  initGithubBackup(() => {
+    exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
+    init();
+  });
+}
 document.getElementById('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
 
 // ══════════════════════════════════════
