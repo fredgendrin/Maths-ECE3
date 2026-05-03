@@ -630,13 +630,13 @@ async function submitExam() {
     (ex.questions||[]).map(q => `  ${q.num} (${q.points}pts) : ${q.text}`).join('\n')
   ).join('\n\n');
 
-  const prompt = `Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).
+  const prompt = "Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).
 
 SUJET DE L'EXAMEN :
-${exam.title} — Durée ~30 min — Total : ${exam.totalPoints||100} points
-Chapitres ciblés : ${(exam.focusSkills||[]).join(', ')}
+" + exam.title + " — Durée ~30 min — Total : " + exam.totalPoints||100 + " points
+Chapitres ciblés : " + (exam.focusSkills||[]).join(', ') + "
 
-${exercisesText}
+" + exercisesText + "
 
 CONSIGNES DE CORRECTION :
 1. Lis attentivement la copie manuscrite de l'élève
@@ -654,7 +654,7 @@ Puis structure ta correction exercice par exercice.
 Termine par :
 POINTS_FORTS: [liste des compétences bien maîtrisées]
 POINTS_FAIBLES: [liste des compétences à retravailler]
-CONSEILS: [2-3 conseils concrets pour progresser]`;
+CONSEILS: [2-3 conseils concrets pour progresser]";
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
