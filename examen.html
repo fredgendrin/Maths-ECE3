@@ -213,19 +213,7 @@ async function initGithubBackup(cb){const t=getGHToken();if(!t){if(cb)cb(false);
 </head>
 <body>
 
-<div class="setup-wrap" id="setupWrap">
-  <div class="setup-box">
-    <div class="setup-icon">🔑</div>
-    <h2>Configuration requise</h2>
-    <p>Saisis ta clé API Anthropic pour générer et corriger les examens.</p>
-    <input class="setup-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
-    <div class="setup-err" id="setupErr">❌ La clé doit commencer par sk-ant-</div>
-    <label style="font-size:11px;color:var(--muted);text-align:left;display:block;margin-bottom:4px;margin-top:10px;text-transform:uppercase;">Token GitHub (optionnel)</label>
-    <input class="setup-input" type="password" id="ghTokenInput" placeholder="ghp_..." autocomplete="off"/>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;text-align:left;">Pour sauvegarder les résultats d'examens.</div>
-    <button class="btn btn-cta" style="width:100%;justify-content:center;" onclick="saveKey()">Continuer →</button>
-  </div>
-</div>
+
 
 <header>
   <div class="logo">
@@ -357,14 +345,8 @@ function saveKey() {
     init();
   });
 }
-if (getKey()) {
-  document.getElementById('setupWrap').style.display = 'none';
-  initGithubBackup(() => {
-    exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
-    init();
-  });
-}
-document.getElementById('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
+// Setup géré par index.html
+document.getElementById('keyInput_unused').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
 
 // ══════════════════════════════════════
 // EXAMS STORE
@@ -884,7 +866,11 @@ function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 // ══════════════════════════════════════
 // DÉMARRAGE
 // ══════════════════════════════════════
-if (getKey()) {
+// Démarre directement — la config vient de index.html (même localStorage)
+if (!getKey()) {
+  // Pas de clé API configurée → retour à index.html
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0c0c14;font-family:Syne,sans-serif;text-align:center;padding:24px;"><div><div style="font-size:48px;margin-bottom:20px;">⚙️</div><h2 style="color:#f0eeff;margin-bottom:12px;">Configuration requise</h2><p style="color:#8884aa;margin-bottom:24px;">Configure d'abord l'application depuis la page Révisions.</p><a href="index.html" style="background:#e8445a;color:white;padding:14px 28px;border-radius:11px;text-decoration:none;font-weight:700;">← Retour aux Révisions</a></div></div>';
+} else {
   initGithubBackup(() => {
     exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
     init();
