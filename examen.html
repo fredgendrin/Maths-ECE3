@@ -307,7 +307,10 @@ function saveKey() {
   const ghToken = document.getElementById('ghTokenInput').value.trim();
   if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
-  init();
+  initGithubBackup(() => {
+    exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
+    init();
+  });
 }
 if (getKey()) document.getElementById('setupWrap').style.display = 'none';
 document.getElementById('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
