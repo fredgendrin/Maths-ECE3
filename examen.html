@@ -435,56 +435,30 @@ async function startNewExam() {
 }
 
 async function generateExam(weakSkills, examNum) {
-  const prog = getProg();
-  const hasHistory = Object.keys(prog).length > 0;
-
   const skillsList = weakSkills.length > 0
     ? weakSkills.join(', ')
     : 'Calcul littéral, Fractions, Pythagore, Équations';
 
   const previousExamContext = exams.length > 0
-    ? `\nL'élève a déjà passé ${exams.length} examen(s) blanc(s). Dernier score : ${exams[exams.length-1]?.score||'?'}/100.`
-    : '\nC\'est le premier examen blanc de l\'élève.';
+    ? ' Dernier score : ' + exams[exams.length-1]?.score + '/100.'
+    : ' Premier examen blanc.';
 
-  const prompt = `Tu es un professeur de mathématiques qui crée un sujet d'examen blanc pour une élève de 4ème (EIB Paris, programme ECE3, SANS calculatrice, durée ~30 minutes).
-
-CONTEXTE :
-- Points à cibler en priorité : ${skillsList}
-- Format à respecter : exactement comme les annales ECE3 EIB Paris${previousExamContext}
-
-CONSIGNES DE RÉDACTION :
-- Crée exactement 4 exercices variés totalisant ~100 points
-- Exercice 1 : QCM (5 questions à choix unique, 5 points chacune = 25 pts)
-- Exercice 2 : Calcul numérique pur (expressions à calculer, 25 pts)
-- Exercice 3 : Calcul littéral / Équations (25 pts)
-- Exercice 4 : Problème de géométrie ou problème concret (25 pts)
-- Les exercices doivent cibler les points faibles : ${skillsList}
-- Niveau : accessible mais exigeant, format ECE3 authentique
-- SANS calculatrice : tous les calculs doivent être faisables à la main
-
-Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
-{
-  "title": "Examen Blanc n°${examNum}",
-  "focusSkills": ["skill1", "skill2", "skill3"],
-  "totalPoints": 100,
-  "duration": "30 minutes",
-  "exercises": [
-    {
-      "number": 1,
-      "title": "Titre de l'exercice",
-      "points": 25,
-      "skill": "compétence ciblée",
-      "instructions": "Instruction générale si besoin",
-      "questions": [
-        {
-          "num": "1.",
-          "text": "Énoncé de la question (utilise \\n pour les sauts de ligne)",
-          "points": 5
-        }
-      ]
-    }
-  ]
-}`;
+  const prompt = 'Tu es un professeur de mathematiques creant un examen blanc ECE3 EIB Paris, 4eme, SANS calculatrice, duree 30 minutes. '
+    + 'Points a cibler : ' + skillsList + '. '
+    + 'Format annales ECE3.' + previousExamContext + ' '
+    + 'Cree 4 exercices : Ex1 QCM (25pts), Ex2 Calcul numerique (25pts), Ex3 Algebre/Equations (25pts), Ex4 Geometrie/Probleme (25pts). '
+    + 'Reponds UNIQUEMENT en JSON valide sans markdown : '
+    + JSON.stringify({
+        title: 'Examen Blanc n°EXAMNUM',
+        focusSkills: ['skill1','skill2'],
+        totalPoints: 100,
+        duration: '30 minutes',
+        exercises: [{
+          number: 1, title: 'Titre exercice', points: 25, skill: 'competence',
+          instructions: 'Instruction generale',
+          questions: [{ num: '1.', text: 'Enonce de la question', points: 5 }]
+        }]
+      }).replace('EXAMNUM', String(examNum));
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -511,6 +485,7 @@ Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
   parsed.generated = new Date().toLocaleDateString('fr-FR');
   return parsed;
 }
+
 
 // ══════════════════════════════════════
 // AFFICHER L'EXAMEN
