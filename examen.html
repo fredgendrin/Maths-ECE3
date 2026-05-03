@@ -657,31 +657,31 @@ async function submitExam() {
     (ex.questions||[]).map(q => `  ${q.num} (${q.points}pts) : ${q.text}`).join('\n')
   ).join('\n\n');
 
-  const prompt = "Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).
-
-SUJET DE L'EXAMEN :
-" + exam.title + " — Durée ~30 min — Total : " + exam.totalPoints||100 + " points
-Chapitres ciblés : " + (exam.focusSkills||[]).join(', ') + "
-
-" + exercisesText + "
-
-CONSIGNES DE CORRECTION :
-1. Lis attentivement la copie manuscrite de l'élève
-2. Pour chaque exercice et question, indique :
-   - Les points obtenus / points possibles
-   - Si la démarche est bonne même si la réponse est fausse
-   - L'erreur précise si présente
-3. Donne un commentaire général encourageant
-4. Identifie les 2-3 points les plus importants à retravailler
-5. Donne des conseils méthodologiques pour l'ECE3
-
-FORMAT DE RÉPONSE :
-Commence par : NOTE GLOBALE: [X]/100
-Puis structure ta correction exercice par exercice.
-Termine par :
-POINTS_FORTS: [liste des compétences bien maîtrisées]
-POINTS_FAIBLES: [liste des compétences à retravailler]
-CONSEILS: [2-3 conseils concrets pour progresser]";
+  const prompt = "Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).\n"
+    + "\n"
+    + "SUJET DE L'EXAMEN :\n"
+    + "" + exam.title + " — Durée ~30 min — Total : " + exam.totalPoints||100 + " points\n"
+    + "Chapitres ciblés : " + (exam.focusSkills||[]).join(', ') + "\n"
+    + "\n"
+    + "" + exercisesText + "\n"
+    + "\n"
+    + "CONSIGNES DE CORRECTION :\n"
+    + "1. Lis attentivement la copie manuscrite de l'élève\n"
+    + "2. Pour chaque exercice et question, indique :\n"
+    + "   - Les points obtenus / points possibles\n"
+    + "   - Si la démarche est bonne même si la réponse est fausse\n"
+    + "   - L'erreur précise si présente\n"
+    + "3. Donne un commentaire général encourageant\n"
+    + "4. Identifie les 2-3 points les plus importants à retravailler\n"
+    + "5. Donne des conseils méthodologiques pour l'ECE3\n"
+    + "\n"
+    + "FORMAT DE RÉPONSE :\n"
+    + "Commence par : NOTE GLOBALE: [X]/100\n"
+    + "Puis structure ta correction exercice par exercice.\n"
+    + "Termine par :\n"
+    + "POINTS_FORTS: [liste des compétences bien maîtrisées]\n"
+    + "POINTS_FAIBLES: [liste des compétences à retravailler]\n"
+    + "CONSEILS: [2-3 conseils concrets pour progresser]";
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
