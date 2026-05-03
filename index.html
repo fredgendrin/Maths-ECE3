@@ -289,13 +289,19 @@ function saveSetup() {
   const ghToken = document.getElementById('ghTokenInput').value.trim();
   if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
-  renderHome();
+  initGithubBackup(() => {
+    prog = JSON.parse(localStorage.getItem(PROG_STORE)||'{}');
+    remedialBank = JSON.parse(localStorage.getItem(REMEDIAL_STORE)||'{}');
+    renderHome();
+  });
 }
 
 function resetSetup() {
   document.getElementById('keyInput').value    = getKey();
   document.getElementById('email1Input').value = getEmail1();
   document.getElementById('email2Input').value = getEmail2();
+  const ghInp = document.getElementById('ghTokenInput');
+  if (ghInp) ghInp.value = localStorage.getItem('eib_github_token') || '';
   document.getElementById('setupErr').style.display = 'none';
   document.getElementById('setupWrap').style.display = 'flex';
 }
@@ -551,6 +557,6 @@ function copyExportData(){var t=document.getElementById("exportText");t.select()
 renderHome();
 });
 </script>
-<div id="exportOverlay"><div style="background:#1c1a2e;border:1.5px solid #6c5ce7;border-radius:20px;padding:32px;max-width:500px;width:100%;text-align:center;"><p style="font-family:Syne,sans-serif;font-weight:800;font-size:20px;margin-bottom:12px;color:#f0eeff;">Exporter mes donnees 📤</p><p style="font-size:13px;color:#8884aa;margin-bottom:16px;line-height:1.6;">Appuie longuement sur le texte, selectionne tout, copie et envoie a papa/maman.</p><textarea id="exportText" style="width:100%;height:120px;background:#13121e;border:1.5px solid #26233d;border-radius:10px;padding:12px;color:#f0eeff;font-size:10px;font-family:monospace;resize:none;" readonly></textarea><div style="display:flex;gap:10px;margin-top:14px;"><button onclick="copyExportData()" style="flex:1;background:#e8445a;color:white;border:none;padding:14px;border-radius:11px;font-weight:700;font-size:14px;cursor:pointer;">Copier</button><button onclick="closeExportOverlay()" style="background:transparent;border:1.5px solid #26233d;color:#8884aa;padding:14px 18px;border-radius:11px;font-size:14px;cursor:pointer;">Fermer</button></div><div id="copyMsg" style="display:none;color:#00b894;font-size:13px;margin-top:10px;">Copie! Envoie ce texte a tes parents.</div></div></div>
+<div id="exportOverlay"><div style="background:#1c1a2e;border:1.5px solid #6c5ce7;border-radius:20px;padding:32px;max-width:500px;width:100%;text-align:center;"><p style="font-family:Syne,sans-serif;font-weight:800;font-size:20px;margin-bottom:12px;color:#f0eeff;">Exporter mes donnees 📤</p><p style="font-size:13px;color:#8884aa;margin-bottom:16px;line-height:1.6;">Appuie longuement sur le texte, selectionne tout, copie et envoie a papa/maman.</p><textarea id="exportText" style="width:100%;height:120px;background:#13121e;border:1.5px solid #26233d;border-radius:10px;padding:12px;color:#f0eeff;font-size:10px;font-family:monospace;resize:none;" readonly></textarea><div style="display:flex;gap:10px;margin-top:14px;"><button onclick="copyExportData()" style="flex:1;background:#e8445a;color:white;border:none;padding:14px;border-radius:11px;font-weight:700;font-size:14px;cursor:pointer;">Copier</button><button onclick="closeExportOverlay()" style="background:transparent;border:1.5px solid #26233d;color:#8884aa;padding:14px 18px;border-radius:11px;font-size:14px;cursor:pointer;" onclick="closeExportOverlay()">Fermer</button></div><div id="copyMsg" style="display:none;color:#00b894;font-size:13px;margin-top:10px;">Copie! Envoie ce texte a tes parents.</div></div></div>
 </body>
 </html>
