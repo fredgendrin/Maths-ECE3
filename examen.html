@@ -5,52 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Examens Blancs ECE3 – EIB Paris</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-// SAUVEGARDE GITHUB - Module partagé index.html + examen.html
-const GITHUB_OWNER='fredgendrin',GITHUB_REPO='Maths-ECE3',GITHUB_FILE='resultats.json',GITHUB_BRANCH='main',TOKEN_STORE='eib_github_token';
-const BACKUP_KEYS=['eib_prog_v6','eib_remedial_v6','eib_exams_v1'];
-function getGHToken(){return localStorage.getItem(TOKEN_STORE)||'';}
-async function githubLoad(){
-  const token=getGHToken();if(!token)return false;
-  try{
-    const url=`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}?ref=${GITHUB_BRANCH}`;
-    const resp=await fetch(url,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
-    if(resp.status===404)return false;
-    if(!resp.ok)throw new Error('load '+resp.status);
-    const data=await resp.json();
-    const content=JSON.parse(atob(data.content.replace(/\n/g,'')));
-    BACKUP_KEYS.forEach(key=>{if(content[key]!==undefined)localStorage.setItem(key,JSON.stringify(content[key]));});
-    console.log('[Sauvegarde] Restauré depuis GitHub');
-    return true;
-  }catch(e){console.warn('[Sauvegarde] Erreur load:',e.message);return false;}
-}
-async function githubSave(){
-  const token=getGHToken();if(!token)return false;
-  try{
-    const backup={savedAt:new Date().toISOString()};
-    BACKUP_KEYS.forEach(key=>{const val=localStorage.getItem(key);if(val)backup[key]=JSON.parse(val);});
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(backup,null,2))));
-    const url=`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-    let sha=null;
-    try{const ex=await fetch(url,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});if(ex.ok){const d=await ex.json();sha=d.sha;}}catch(e){}
-    const body={message:'Resultats '+new Date().toLocaleDateString('fr-FR'),content,branch:GITHUB_BRANCH};
-    if(sha)body.sha=sha;
-    const r=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok){const err=await r.json();throw new Error(err.message);}
-    console.log('[Sauvegarde] Sauvegardé sur GitHub');
-    return true;
-  }catch(e){console.warn('[Sauvegarde] Erreur save:',e.message);return false;}
-}
-function showSaveIndicator(status){
-  let el=document.getElementById('ghSI');
-  if(!el){el=document.createElement('div');el.id='ghSI';el.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;padding:8px 16px;border-radius:100px;font-size:12px;font-family:sans-serif;border:1px solid;transition:opacity 0.3s;';document.body.appendChild(el);}
-  const m={saving:{bg:'rgba(108,92,231,0.15)',b:'rgba(108,92,231,0.4)',c:'#a29bfe',t:'Sauvegarde...'},saved:{bg:'rgba(0,184,148,0.12)',b:'rgba(0,184,148,0.4)',c:'#6ee7b7',t:'Sauvegardé ☁️'},error:{bg:'rgba(214,48,49,0.12)',b:'rgba(214,48,49,0.4)',c:'#fca5a5',t:'Erreur sauvegarde'}}[status];
-  el.style.background=m.bg;el.style.borderColor=m.b;el.style.color=m.c;el.textContent=m.t;el.style.opacity='1';
-  if(status!=='saving')setTimeout(()=>el.style.opacity='0',3000);
-}
-async function githubSaveWithIndicator(){showSaveIndicator('saving');const ok=await githubSave();showSaveIndicator(ok?'saved':'error');return ok;}
-async function initGithubBackup(cb){const t=getGHToken();if(!t){if(cb)cb(false);return;}const ok=await githubLoad();if(cb)cb(ok);}
-</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
   :root{--bg:#0c0c14;--surface:#13121e;--card:#1c1a2e;--accent:#e8445a;--accent2:#6c5ce7;--accent3:#00cec9;--gold:#fdcb6e;--text:#f0eeff;--muted:#8884aa;--border:#26233d;--correct:#00b894;--wrong:#d63031;--warn:#e17055;}
@@ -337,16 +291,18 @@ function saveKey() {
   const k = document.getElementById('keyInput').value.trim();
   if (!k.startsWith('sk-ant-')) { document.getElementById('setupErr').style.display = 'block'; return; }
   localStorage.setItem(KEY_STORE, k);
-  const ghToken = document.getElementById('ghTokenInput').value.trim();
-  if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
+  init();
+}
+if (!getKey()) {
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0c0c14;font-family:sans-serif;text-align:center;padding:24px;"><div><div style="font-size:48px;margin-bottom:20px">⚙️</div><h2 style="color:#f0eeff;margin-bottom:12px">Configuration requise</h2><p style="color:#8884aa;margin-bottom:24px">Configure d\'abord l\'app depuis la page Révisions.</p><a href="index.html" style="background:#e8445a;color:white;padding:14px 28px;border-radius:11px;text-decoration:none;font-weight:700">← Retour aux Révisions</a></div></div>';
+} else {
   initGithubBackup(() => {
     exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
     init();
   });
 }
-// Setup géré par index.html
-document.getElementById('keyInput_unused').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
+
 
 // ══════════════════════════════════════
 // EXAMS STORE
@@ -489,36 +445,45 @@ async function generateExam(weakSkills, examNum) {
     ? `\nL'élève a déjà passé ${exams.length} examen(s) blanc(s). Dernier score : ${exams[exams.length-1]?.score||'?'}/100.`
     : '\nC\'est le premier examen blanc de l\'élève.';
 
-  const prompt = [
-    "Tu es un professeur de mathematiques qui cree un sujet d'examen blanc pour une eleve de 4eme (EIB Paris, programme ECE3, SANS calculatrice, duree ~30 minutes).",
-    "",
-    "CONTEXTE :",
-    "- Points a cibler en priorite : " + skillsList,
-    "- Format a respecter : exactement comme les annales ECE3 EIB Paris" + previousExamContext,
-    "",
-    "CONSIGNES DE REDACTION :",
-    "- Cree exactement 4 exercices varies totalisant ~100 points",
-    "- Exercice 1 : QCM (5 questions a choix unique, 5 points chacune = 25 pts)",
-    "- Exercice 2 : Calcul numerique pur (expressions a calculer, 25 pts)",
-    "- Exercice 3 : Calcul litteral / Equations (25 pts)",
-    "- Exercice 4 : Probleme de geometrie ou probleme concret (25 pts)",
-    "- Les exercices doivent cibler les points faibles : " + skillsList,
-    "- Niveau : accessible mais exigeant, format ECE3 authentique",
-    "- SANS calculatrice : tous les calculs doivent etre faisables a la main",
-    "",
-    "Reponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :",
-    JSON.stringify({
-      title: "Examen Blanc n°" + examNum,
-      focusSkills: ["skill1", "skill2", "skill3"],
-      totalPoints: 100,
-      duration: "30 minutes",
-      exercises: [{
-        number: 1, title: "Titre", points: 25, skill: "competence",
-        instructions: "Instruction",
-        questions: [{ num: "1.", text: "Enonce", points: 5 }]
-      }]
-    })
-  ].join("\n");
+  const prompt = `Tu es un professeur de mathématiques qui crée un sujet d'examen blanc pour une élève de 4ème (EIB Paris, programme ECE3, SANS calculatrice, durée ~30 minutes).
+
+CONTEXTE :
+- Points à cibler en priorité : ${skillsList}
+- Format à respecter : exactement comme les annales ECE3 EIB Paris${previousExamContext}
+
+CONSIGNES DE RÉDACTION :
+- Crée exactement 4 exercices variés totalisant ~100 points
+- Exercice 1 : QCM (5 questions à choix unique, 5 points chacune = 25 pts)
+- Exercice 2 : Calcul numérique pur (expressions à calculer, 25 pts)
+- Exercice 3 : Calcul littéral / Équations (25 pts)
+- Exercice 4 : Problème de géométrie ou problème concret (25 pts)
+- Les exercices doivent cibler les points faibles : ${skillsList}
+- Niveau : accessible mais exigeant, format ECE3 authentique
+- SANS calculatrice : tous les calculs doivent être faisables à la main
+
+Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
+{
+  "title": "Examen Blanc n°${examNum}",
+  "focusSkills": ["skill1", "skill2", "skill3"],
+  "totalPoints": 100,
+  "duration": "30 minutes",
+  "exercises": [
+    {
+      "number": 1,
+      "title": "Titre de l'exercice",
+      "points": 25,
+      "skill": "compétence ciblée",
+      "instructions": "Instruction générale si besoin",
+      "questions": [
+        {
+          "num": "1.",
+          "text": "Énoncé de la question (utilise \\n pour les sauts de ligne)",
+          "points": 5
+        }
+      ]
+    }
+  ]
+}`;
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -657,31 +622,31 @@ async function submitExam() {
     (ex.questions||[]).map(q => `  ${q.num} (${q.points}pts) : ${q.text}`).join('\n')
   ).join('\n\n');
 
-  const prompt = "Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).\n"
-    + "\n"
-    + "SUJET DE L'EXAMEN :\n"
-    + "" + exam.title + " — Durée ~30 min — Total : " + exam.totalPoints||100 + " points\n"
-    + "Chapitres ciblés : " + (exam.focusSkills||[]).join(', ') + "\n"
-    + "\n"
-    + "" + exercisesText + "\n"
-    + "\n"
-    + "CONSIGNES DE CORRECTION :\n"
-    + "1. Lis attentivement la copie manuscrite de l'élève\n"
-    + "2. Pour chaque exercice et question, indique :\n"
-    + "   - Les points obtenus / points possibles\n"
-    + "   - Si la démarche est bonne même si la réponse est fausse\n"
-    + "   - L'erreur précise si présente\n"
-    + "3. Donne un commentaire général encourageant\n"
-    + "4. Identifie les 2-3 points les plus importants à retravailler\n"
-    + "5. Donne des conseils méthodologiques pour l'ECE3\n"
-    + "\n"
-    + "FORMAT DE RÉPONSE :\n"
-    + "Commence par : NOTE GLOBALE: [X]/100\n"
-    + "Puis structure ta correction exercice par exercice.\n"
-    + "Termine par :\n"
-    + "POINTS_FORTS: [liste des compétences bien maîtrisées]\n"
-    + "POINTS_FAIBLES: [liste des compétences à retravailler]\n"
-    + "CONSEILS: [2-3 conseils concrets pour progresser]";
+  const prompt = `Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).
+
+SUJET DE L'EXAMEN :
+${exam.title} — Durée ~30 min — Total : ${exam.totalPoints||100} points
+Chapitres ciblés : ${(exam.focusSkills||[]).join(', ')}
+
+${exercisesText}
+
+CONSIGNES DE CORRECTION :
+1. Lis attentivement la copie manuscrite de l'élève
+2. Pour chaque exercice et question, indique :
+   - Les points obtenus / points possibles
+   - Si la démarche est bonne même si la réponse est fausse
+   - L'erreur précise si présente
+3. Donne un commentaire général encourageant
+4. Identifie les 2-3 points les plus importants à retravailler
+5. Donne des conseils méthodologiques pour l'ECE3
+
+FORMAT DE RÉPONSE :
+Commence par : NOTE GLOBALE: [X]/100
+Puis structure ta correction exercice par exercice.
+Termine par :
+POINTS_FORTS: [liste des compétences bien maîtrisées]
+POINTS_FAIBLES: [liste des compétences à retravailler]
+CONSEILS: [2-3 conseils concrets pour progresser]`;
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -749,7 +714,6 @@ async function submitExam() {
     };
     exams.push(examRecord);
     saveExams();
-    githubSaveWithIndicator();
 
     // Affiche la correction
     const scoreCls = score>=80?'great':score>=60?'good':score>=40?'avg':'low';
@@ -857,16 +821,7 @@ function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 // ══════════════════════════════════════
 // DÉMARRAGE
 // ══════════════════════════════════════
-// Démarre directement — la config vient de index.html (même localStorage)
-if (!getKey()) {
-  // Pas de clé API configurée → retour à index.html
-  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0c0c14;font-family:Syne,sans-serif;text-align:center;padding:24px;"><div><div style="font-size:48px;margin-bottom:20px;">⚙️</div><h2 style="color:#f0eeff;margin-bottom:12px;">Configuration requise</h2><p style="color:#8884aa;margin-bottom:24px;">Configure d'abord l'application depuis la page Révisions.</p><a href="index.html" style="background:#e8445a;color:white;padding:14px 28px;border-radius:11px;text-decoration:none;font-weight:700;">← Retour aux Révisions</a></div></div>';
-} else {
-  initGithubBackup(() => {
-    exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
-    init();
-  });
-}
+if (getKey()) init();
 </script>
 </body>
 </html>
