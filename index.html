@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RÃ©visions Maths ECE3 â EIB Paris</title>
+<title>Révisions Maths ECE3 – EIB Paris</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="sauvegarde.js"></script>
 <style>
@@ -143,98 +143,88 @@
   .next-preview{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--muted);text-align:left;}
   .next-preview strong{color:var(--text);display:block;margin-bottom:4px;}
   @media(max-width:600px){header{padding:12px 16px;}main{padding:20px 14px 80px;}.stat-row{flex-direction:column;}.days-grid{grid-template-columns:1fr 1fr;}.hbadges{display:none;}.ans-actions{justify-content:stretch;}.ans-actions .btn{flex:1;justify-content:center;}.hero-buttons{flex-direction:column;align-items:center;}}
-</style>
-<style>#exportOverlay{display:none;}#exportOverlay.show{display:flex;}</style>
+
+<style>#exportOverlay{display:none;}#exportOverlay.show{display:flex;position:fixed;inset:0;background:rgba(12,12,20,0.95);z-index:9999;align-items:center;justify-content:center;padding:24px;}</style>
 </head>
 <body>
 
 <div class="setup-wrap" id="setupWrap">
   <div class="setup-box">
-    <div class="setup-icon">âï¸</div>
+    <div class="setup-icon">⚙️</div>
     <h2>Configuration initiale</h2>
-    <p>Saisis ta clÃ© API et les emails des parents. Un rÃ©sumÃ© sera envoyÃ© automatiquement aprÃ¨s chaque session.</p>
-    <div class="setup-privacy">ð Aucune information n'est Ã©crite dans le code. Tout reste sur cet appareil uniquement.</div>
-    <label class="setup-label">ClÃ© API Anthropic</label>
+    <p>Saisis ta clé API et les emails des parents. Un résumé sera envoyé automatiquement après chaque session.</p>
+    <div class="setup-privacy">🔒 Aucune information n'est écrite dans le code. Tout reste sur cet appareil uniquement.</div>
+    <label class="setup-label">Clé API Anthropic</label>
     <input class="setup-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
-    <div class="setup-note">Disponible sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> â API Keys</div>
+    <div class="setup-note">Disponible sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys</div>
     <hr class="setup-divider">
     <label class="setup-label">Email parent 1</label>
     <input class="setup-input" type="email" id="email1Input" placeholder="email du papa..." autocomplete="off"/>
     <label class="setup-label">Email parent 2</label>
     <input class="setup-input" type="email" id="email2Input" placeholder="email de la maman..." autocomplete="off"/>
-    <div class="setup-note" style="margin-top:6px;">Les rÃ©sultats seront envoyÃ©s automatiquement aux deux aprÃ¨s chaque session.</div>
+    <div class="setup-note" style="margin-top:6px;">Les résultats seront envoyés automatiquement aux deux après chaque session.</div>
     <hr class="setup-divider">
     <label class="setup-label">Token GitHub (sauvegarde automatique)</label>
     <input class="setup-input" type="password" id="ghTokenInput" placeholder="ghp_..." autocomplete="off"/>
-    <div class="setup-note">Sauvegarde automatique des rÃ©sultats sur GitHub â aucun risque de perte de donnÃ©es.</div>
+    <div class="setup-note">Sauvegarde automatique des résultats sur GitHub — aucun risque de perte de données.</div>
     <div class="setup-err" id="setupErr"></div>
-    <button class="btn btn-cta" style="width:100%;justify-content:center;margin-top:12px;" onclick="saveSetup()">Enregistrer et commencer â</button>
+    <button class="btn btn-cta" style="width:100%;justify-content:center;margin-top:12px;" onclick="saveSetup()">Enregistrer et commencer →</button>
   </div>
 </div>
 
 <header>
   <div class="logo">
-    <div class="logo-mark">â</div>
-    <h1>ECE 3 Maths<small>EIB Paris Â· 4Ã¨me Â· Adaptatif</small></h1>
+    <div class="logo-mark">∑</div>
+    <h1>ECE 3 Maths<small>EIB Paris · 4ème · Adaptatif</small></h1>
   </div>
   <div class="hbadges">
     <span class="hb hi" id="hDay">Jour 1/14</span>
-    <span class="hb" id="hScore">Moyenne â</span>
-    <span class="hb" id="hTime">â± 0 min</span>
-    <a class="hb exam-link" href="examen.html">ð Examens blancs</a>
-    <span class="hb key" onclick="resetSetup()" title="Modifier les paramÃ¨tres">âï¸</span>
+    <span class="hb" id="hScore">Moyenne —</span>
+    <span class="hb" id="hTime">⏱ 0 min</span>
+    <a class="hb exam-link" href="examen.html">📝 Examens blancs</a>
+    <span class="hb key" onclick="showExportData()" style="border-color:var(--accent2);color:var(--accent2);">📤</span>
+    <span class="hb key" onclick="resetSetup()" title="Modifier les paramètres">⚙️</span>
   </div>
 </header>
 
 <main>
   <div id="sHome" class="screen active">
     <div class="home-hero">
-      <div class="eyebrow">ð Programme ECE3 Â· 14 jours Â· Adaptatif</div>
-      <h2>PrÃ©pare ton <em>Ã©preuve</em><br>avec mÃ©thode</h2>
-      <p>RÃ©sous les exercices sur papier, prends une photo, et l'IA corrige ta copie. Tes parents reÃ§oivent automatiquement tes rÃ©sultats aprÃ¨s chaque session.</p>
+      <div class="eyebrow">📐 Programme ECE3 · 14 jours · Adaptatif</div>
+      <h2>Prépare ton <em>épreuve</em><br>avec méthode</h2>
+      <p>Résous les exercices sur papier, prends une photo, et l'IA corrige ta copie. Tes parents reçoivent automatiquement tes résultats après chaque session.</p>
       <div class="hero-buttons">
-        <button class="btn btn-cta" onclick="startToday()">â¶ Session du jour</button>
-        <a class="btn btn-gold" href="examen.html">ð Passer un examen blanc</a>
+        <button class="btn btn-cta" onclick="startToday()">▶ Session du jour</button>
+        <a class="btn btn-gold" href="examen.html">📝 Passer un examen blanc</a>
       </div>
     </div>
 
     <!-- EXAM BANNER -->
     <div class="exam-banner" id="examBanner" style="display:none">
       <div class="exam-banner-text">
-        <h3>ð PrÃªt(e) pour un examen blanc ?</h3>
-        <p>Tu as complÃ©tÃ© plusieurs sessions de rÃ©visions. L'IA peut gÃ©nÃ©rer un examen de 30 min ciblant tes points faibles.</p>
+        <h3>📝 Prêt(e) pour un examen blanc ?</h3>
+        <p>Tu as complété plusieurs sessions de révisions. L'IA peut générer un examen de 30 min ciblant tes points faibles.</p>
       </div>
-      <a class="btn btn-gold" href="examen.html">GÃ©nÃ©rer un examen â¦</a>
+      <a class="btn btn-gold" href="examen.html">Générer un examen ✦</a>
     </div>
 
     <div class="stat-row">
-      <div class="stat-card"><div class="stat-label">Jours complÃ©tÃ©s</div><div class="stat-val c1" id="sDone">0/14</div></div>
-      <div class="stat-card"><div class="stat-label">Score moyen</div><div class="stat-val c2" id="sAvg">â</div></div>
-      <div class="stat-card"><div class="stat-label">Points faibles</div><div class="stat-val c3" id="sWeak">â</div></div>
+      <div class="stat-card"><div class="stat-label">Jours complétés</div><div class="stat-val c1" id="sDone">0/14</div></div>
+      <div class="stat-card"><div class="stat-label">Score moyen</div><div class="stat-val c2" id="sAvg">—</div></div>
+      <div class="stat-card"><div class="stat-label">Points faibles</div><div class="stat-val c3" id="sWeak">—</div></div>
     </div>
-    <div style="text-align:right;margin-bottom:12px;"><button class="btn btn-ghost" style="font-size:11px;" onclick="showExportData()">ð¤ Exporter mes donnÃ©es</button></div>
-      <div class="week-head">Semaine 1 â Calcul &amp; AlgÃ¨bre</div>
+    <div class="week-head">Semaine 1 — Calcul &amp; Algèbre</div>
     <div class="days-grid" id="wk1"></div>
-    <div id="exportBanner" style="display:none;background:rgba(108,92,231,0.1);border:1.5px solid rgba(108,92,231,0.3);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:8px;">ð¤ Tes donnÃ©es de progression</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;">Copie tout ce texte et envoie-le pour restaurer ta progression sur un autre appareil.</p>
-        <textarea id="exportText" style="width:100%;min-height:90px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:10px;font-family:monospace;resize:none;" readonly></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <button class="btn btn-cta" style="flex:1;justify-content:center;font-size:12px;" onclick="copyExportData()">ð Tout copier</button>
-          <button class="btn btn-ghost" onclick="document.getElementById('exportBanner').style.display='none'">â</button>
-        </div>
-        <div id="copyMsg" style="font-size:11px;color:var(--correct);margin-top:6px;display:none;">â CopiÃ© !</div>
-      </div>
-      <div class="week-head">Semaine 2 â GÃ©omÃ©trie &amp; SynthÃ¨se</div>
+    <div class="week-head">Semaine 2 — Géométrie &amp; Synthèse</div>
     <div class="days-grid" id="wk2"></div>
   </div>
 
   <div id="sEx" class="screen">
     <div class="ex-topbar">
-      <button class="btn btn-ghost" onclick="goHome()">â Retour</button>
+      <button class="btn btn-ghost" onclick="goHome()">← Retour</button>
       <div class="ex-meta">
         <div class="ex-day-tag" id="exTag">Jour 1</div>
-        <div class="ex-title" id="exTitle">â</div>
+        <div class="ex-title" id="exTitle">—</div>
       </div>
       <div class="timer-box"><div class="timer-label">Temps</div><div class="timer-val" id="timerVal">00:00</div></div>
     </div>
@@ -242,25 +232,25 @@
     <div id="remedialArea"></div>
     <div id="exContainer"></div>
     <div class="ex-nav">
-      <button class="btn btn-outline" id="btnPrev" onclick="prevEx()">â PrÃ©c.</button>
+      <button class="btn btn-outline" id="btnPrev" onclick="prevEx()">← Préc.</button>
       <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
       <span class="prog-count" id="progCount">1/3</span>
-      <button class="btn btn-cta" id="btnNext" onclick="nextEx()">Suivant â</button>
+      <button class="btn btn-cta" id="btnNext" onclick="nextEx()">Suivant →</button>
     </div>
   </div>
 
   <div id="sDone" class="screen">
     <div class="done-wrap">
-      <div class="done-icon" id="dIcon">ð</div>
-      <h2 id="dTitle">Session terminÃ©e !</h2>
+      <div class="done-icon" id="dIcon">🏆</div>
+      <h2 id="dTitle">Session terminée !</h2>
       <p id="dMsg"></p>
-      <div class="score-pill">Score du jour : <em id="dScore">â</em></div>
+      <div class="score-pill">Score du jour : <em id="dScore">—</em></div>
       <div class="skill-chips" id="dSkills"></div>
       <div id="emailStatusArea"></div>
       <div class="next-preview" id="nextPreview" style="display:none"></div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
-        <button class="btn btn-cta" onclick="goHome()">â Retour au programme</button>
-        <a class="btn btn-gold" href="examen.html">ð Passer un examen blanc</a>
+        <button class="btn btn-cta" onclick="goHome()">← Retour au programme</button>
+        <a class="btn btn-gold" href="examen.html">📝 Passer un examen blanc</a>
       </div>
     </div>
   </div>
@@ -290,8 +280,8 @@ function saveSetup() {
   const e1 = document.getElementById('email1Input').value.trim();
   const e2 = document.getElementById('email2Input').value.trim();
   const err = document.getElementById('setupErr');
-  if (!k.startsWith('sk-ant-')) { err.textContent='â La clÃ© API doit commencer par sk-ant-'; err.style.display='block'; return; }
-  if (!e1 || !e1.includes('@')) { err.textContent='â Saisis au moins l\'email parent 1'; err.style.display='block'; return; }
+  if (!k.startsWith('sk-ant-')) { err.textContent='❌ La clé API doit commencer par sk-ant-'; err.style.display='block'; return; }
+  if (!e1 || !e1.includes('@')) { err.textContent='❌ Saisis au moins l\'email parent 1'; err.style.display='block'; return; }
   localStorage.setItem(KEY_STORE, k);
   localStorage.setItem(EMAIL1_STORE, e1);
   if (e2 && e2.includes('@')) localStorage.setItem(EMAIL2_STORE, e2);
@@ -299,24 +289,7 @@ function saveSetup() {
   const ghToken = document.getElementById('ghTokenInput').value.trim();
   if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
-  function showExportData() {
-  const keys = ['eib_prog_v6','eib_remedial_v6','eib_exams_v1'];
-  const data = {};
-  keys.forEach(k => { const v = localStorage.getItem(k); if (v) data[k] = v; });
-  if (!Object.keys(data).length) { alert('Aucune donnée trouvée dans ce navigateur.'); return; }
-  document.getElementById('exportText').value = JSON.stringify(data);
-  document.getElementById('exportOverlay').classList.add('show');
-}
-function copyExportData() {
-  const ta = document.getElementById('exportText');
-  ta.select();
-  try {
-    navigator.clipboard.writeText(ta.value).catch(() => document.execCommand('copy'));
-  } catch(e) { document.execCommand('copy'); }
-  document.getElementById('copyMsg').style.display = 'block';
-  setTimeout(() => document.getElementById('copyMsg').style.display = 'none', 2000);
-}
-renderHome();
+  renderHome();
 }
 
 function resetSetup() {
@@ -338,75 +311,75 @@ if (!isConfigured()) {
 document.getElementById('keyInput').addEventListener('keydown', e => { if (e.key==='Enter') saveSetup(); });
 
 const PLAN=[
-  {day:1,topic:"Nombres relatifs",sub:"EnchaÃ®nement d'opÃ©rations",tip:"ð¡ Respecte l'ordre : parenthÃ¨ses, puis ÃÃ·, puis +â. Avec des nÃ©gatifs, sois trÃ¨s attentif aux signes !",exercises:[
-    {skill:"Calcul relatif",q:"Calcule en dÃ©taillant :\n\na) A = 9 Ã 6 â [7 â 8 Ã (â3 + 5)]\nb) B = (â18 Ã· 9 + 5) Ã 11 / (7 â 5 Ã 8)",hint:"A : commence par (â3+5). B : numÃ©rateur et dÃ©nominateur sÃ©parÃ©ment.",sol:"a) 63\nb) â1"},
-    {skill:"Fractions imbriquÃ©es",q:"Calcule C (rÃ©sultat irrÃ©ductible) :\n\nC = (3 â 15/6) / (5/8 Ã 12)",hint:"Num: 3â15/6=1/2. DÃ©n: 5Ã12/8=15/2.",sol:"C = 1/15"},
-    {skill:"Puissances & relatifs",q:"Calcule E :\n\nE = â4Â³ + 3Â² â (3Â³ â 4Â²)Â²",hint:"â4Â³=â64. 3Â³â4Â²=11. 11Â²=121.",sol:"E = â176"}
+  {day:1,topic:"Nombres relatifs",sub:"Enchaînement d'opérations",tip:"💡 Respecte l'ordre : parenthèses, puis ×÷, puis +−. Avec des négatifs, sois très attentif aux signes !",exercises:[
+    {skill:"Calcul relatif",q:"Calcule en détaillant :\n\na) A = 9 × 6 − [7 − 8 × (−3 + 5)]\nb) B = (−18 ÷ 9 + 5) × 11 / (7 − 5 × 8)",hint:"A : commence par (−3+5). B : numérateur et dénominateur séparément.",sol:"a) 63\nb) −1"},
+    {skill:"Fractions imbriquées",q:"Calcule C (résultat irréductible) :\n\nC = (3 − 15/6) / (5/8 × 12)",hint:"Num: 3−15/6=1/2. Dén: 5×12/8=15/2.",sol:"C = 1/15"},
+    {skill:"Puissances & relatifs",q:"Calcule E :\n\nE = −4³ + 3² − (3³ − 4²)²",hint:"−4³=−64. 3³−4²=11. 11²=121.",sol:"E = −176"}
   ]},
-  {day:2,topic:"Fractions & Rationnels",sub:"OpÃ©rations, inverse, problÃ¨me",tip:"ð¡ Pour diviser : multiplier par l'inverse. Pour additionner : mÃªme dÃ©nominateur !",exercises:[
-    {skill:"OpÃ©rations fractions",q:"Calcule (rÃ©sultat irrÃ©ductible) :\n\na) A = (1/6 + 11/12) Ã (6/â13)\nb) B = (5/9 â 3) Ã· 2/3",hint:"a) LCD=12. b) 5/9â27/9=â22/9.",sol:"a) â1/2\nb) â11/3"},
-    {skill:"Puissances nÃ©gatives",q:"Calcule :\n\na) C = 4â»â¶ Ã 4â´\nb) D = (10â»Â²)â»â·",hint:"aáµÃaâ¿=aáµâºâ¿. (aâ¿)áµ=aâ¿Ë£áµ.",sol:"a) 1/16\nb) 10^14"},
-    {skill:"Fraction d'une quantitÃ©",q:"Classe de 30 Ã©lÃ¨ves, 2/5 sont garÃ§ons.\n\na) Nombre de garÃ§ons ?\nb) 3/4 des filles font du sport. Combien ?",hint:"a) 2/5Ã30. b) Filles = 30âgarÃ§ons.",sol:"a) 12\nb) 13 ou 14"}
+  {day:2,topic:"Fractions & Rationnels",sub:"Opérations, inverse, problème",tip:"💡 Pour diviser : multiplier par l'inverse. Pour additionner : même dénominateur !",exercises:[
+    {skill:"Opérations fractions",q:"Calcule (résultat irréductible) :\n\na) A = (1/6 + 11/12) × (6/−13)\nb) B = (5/9 − 3) ÷ 2/3",hint:"a) LCD=12. b) 5/9−27/9=−22/9.",sol:"a) −1/2\nb) −11/3"},
+    {skill:"Puissances négatives",q:"Calcule :\n\na) C = 4⁻⁶ × 4⁴\nb) D = (10⁻²)⁻⁷",hint:"aᵐ×aⁿ=aᵐ⁺ⁿ. (aⁿ)ᵐ=aⁿˣᵐ.",sol:"a) 1/16\nb) 10^14"},
+    {skill:"Fraction d'une quantité",q:"Classe de 30 élèves, 2/5 sont garçons.\n\na) Nombre de garçons ?\nb) 3/4 des filles font du sport. Combien ?",hint:"a) 2/5×30. b) Filles = 30−garçons.",sol:"a) 12\nb) 13 ou 14"}
   ]},
-  {day:3,topic:"Puissances & Ãcriture scientifique",sub:"RÃ¨gles, calculs, notation",tip:"ð¡ Ãcriture scientifique : aÃ10â¿ avec 1â¤a<10. SÃ©pare coefficients et puissances de 10 !",exercises:[
-    {skill:"RÃ¨gles puissances",q:"Simplifie :\n\na) 2 Ã 2â´â°â°\nb) 5â¶ Ã· 5Â³\nc) (3Â²)Â³",hint:"aáµÃaâ¿=aáµâºâ¿. aáµÃ·aâ¿=aáµâ»â¿. (aâ¿)áµ=aâ¿Ë£áµ.",sol:"a) 2^401\nb) 125\nc) 729"},
-    {skill:"Ãcriture scientifique",q:"En Ã©criture scientifique :\n\na) 0,000732 Ã 10Â¹Â²\nb) (39Ã10â»Â³ Ã 4Ã10â¸) / (26Ã10Â¹Â²)",hint:"a) 0,000732=7,32Ã10â»â´.",sol:"a) 7,32Ã10^8\nb) 6Ã10^(â7)"},
-    {skill:"Notation scientifique complexe",q:"En Ã©criture scientifique :\n\nF = (24Ã10â»â¶ Ã 30 Ã (10â»Â²)â»â·) / (48Ã10â»Â³)",hint:"(10â»Â²)â»â·=10^14. Coeff=15.",sol:"1,5Ã10^12"}
+  {day:3,topic:"Puissances & Écriture scientifique",sub:"Règles, calculs, notation",tip:"💡 Écriture scientifique : a×10ⁿ avec 1≤a<10. Sépare coefficients et puissances de 10 !",exercises:[
+    {skill:"Règles puissances",q:"Simplifie :\n\na) 2 × 2⁴⁰⁰\nb) 5⁶ ÷ 5³\nc) (3²)³",hint:"aᵐ×aⁿ=aᵐ⁺ⁿ. aᵐ÷aⁿ=aᵐ⁻ⁿ. (aⁿ)ᵐ=aⁿˣᵐ.",sol:"a) 2^401\nb) 125\nc) 729"},
+    {skill:"Écriture scientifique",q:"En écriture scientifique :\n\na) 0,000732 × 10¹²\nb) (39×10⁻³ × 4×10⁸) / (26×10¹²)",hint:"a) 0,000732=7,32×10⁻⁴.",sol:"a) 7,32×10^8\nb) 6×10^(−7)"},
+    {skill:"Notation scientifique complexe",q:"En écriture scientifique :\n\nF = (24×10⁻⁶ × 30 × (10⁻²)⁻⁷) / (48×10⁻³)",hint:"(10⁻²)⁻⁷=10^14. Coeff=15.",sol:"1,5×10^12"}
   ]},
-  {day:4,topic:"Calcul littÃ©ral â DÃ©velopper",sub:"Simple et double distributivitÃ©",tip:"ð¡ k(a+b)=ka+kb. (a+b)(c+d) = 4 produits. Distribue le signe : â3(xâ2)=â3x+6 !",exercises:[
-    {skill:"Simple distributivitÃ©",q:"DÃ©veloppe et rÃ©duis :\n\na) 3(2x+5) â 4(xâ2)\nb) â2(3tâ1) + 5t",hint:"Attention au signe devant la parenthÃ¨se.",sol:"a) 2x+23\nb) ât+2"},
-    {skill:"Double distributivitÃ©",q:"DÃ©veloppe et rÃ©duis :\n\na) (x+1)(2xâ3)\nb) (2xâ3)(4â5x) â (4â5x)",hint:"b) (4â5x) est un facteur commun !",sol:"a) 2xÂ²âxâ3\nb) 2(4â5x)(xâ2)"},
-    {skill:"Expression type ECE",q:"C = (2xâ3)(4â5x) â (4â5x)\n\na) C pour x=2\nb) DÃ©veloppe C\nc) Factorise C",hint:"c) (4â5x) facteur commun.",sol:"a) 0\nb) â10xÂ²+28xâ16\nc) 2(4â5x)(xâ2)"}
+  {day:4,topic:"Calcul littéral — Développer",sub:"Simple et double distributivité",tip:"💡 k(a+b)=ka+kb. (a+b)(c+d) = 4 produits. Distribue le signe : −3(x−2)=−3x+6 !",exercises:[
+    {skill:"Simple distributivité",q:"Développe et réduis :\n\na) 3(2x+5) − 4(x−2)\nb) −2(3t−1) + 5t",hint:"Attention au signe devant la parenthèse.",sol:"a) 2x+23\nb) −t+2"},
+    {skill:"Double distributivité",q:"Développe et réduis :\n\na) (x+1)(2x−3)\nb) (2x−3)(4−5x) − (4−5x)",hint:"b) (4−5x) est un facteur commun !",sol:"a) 2x²−x−3\nb) 2(4−5x)(x−2)"},
+    {skill:"Expression type ECE",q:"C = (2x−3)(4−5x) − (4−5x)\n\na) C pour x=2\nb) Développe C\nc) Factorise C",hint:"c) (4−5x) facteur commun.",sol:"a) 0\nb) −10x²+28x−16\nc) 2(4−5x)(x−2)"}
   ]},
-  {day:5,topic:"Calcul littÃ©ral â Factoriser",sub:"Facteur commun, expressions complexes",tip:"ð¡ Cherche le PGCD des coefficients ET les lettres communes. VÃ©rifie en redÃ©veloppant !",exercises:[
-    {skill:"Factorisation simple",q:"Factorise :\n\na) z â 6zÂ²\nb) 36xyÂ³ â 12xÂ²yÂ² + 60xÂ³yâ´",hint:"a) z commun. b) PGCD(36,12,60)=12.",sol:"a) z(1â6z)\nb) 12xyÂ²(3yâx+5xÂ²yÂ²)"},
-    {skill:"Double facteur commun",q:"F = (x+1)(2xâ3) â 3(x+1)\n\na) DÃ©veloppe et rÃ©duis\nb) Factorise",hint:"(x+1) est commun aux deux termes !",sol:"a) 2xÂ²â4xâ6\nb) 2(x+1)(xâ3)"},
-    {skill:"Factorisation ECE",q:"Factorise :\n\na) t + 3tÂ²\nb) 9xÂ²y + 81xÂ³yÂ² â 27xâ·yÂ²",hint:"b) PGCD=9. Commun: xÂ²y.",sol:"a) t(1+3t)\nb) 9xÂ²y(1+9xyâ3xâµy)"}
+  {day:5,topic:"Calcul littéral — Factoriser",sub:"Facteur commun, expressions complexes",tip:"💡 Cherche le PGCD des coefficients ET les lettres communes. Vérifie en redéveloppant !",exercises:[
+    {skill:"Factorisation simple",q:"Factorise :\n\na) z − 6z²\nb) 36xy³ − 12x²y² + 60x³y⁴",hint:"a) z commun. b) PGCD(36,12,60)=12.",sol:"a) z(1−6z)\nb) 12xy²(3y−x+5x²y²)"},
+    {skill:"Double facteur commun",q:"F = (x+1)(2x−3) − 3(x+1)\n\na) Développe et réduis\nb) Factorise",hint:"(x+1) est commun aux deux termes !",sol:"a) 2x²−4x−6\nb) 2(x+1)(x−3)"},
+    {skill:"Factorisation ECE",q:"Factorise :\n\na) t + 3t²\nb) 9x²y + 81x³y² − 27x⁷y²",hint:"b) PGCD=9. Commun: x²y.",sol:"a) t(1+3t)\nb) 9x²y(1+9xy−3x⁵y)"}
   ]},
-  {day:6,topic:"Ãquations du 1er degrÃ©",sub:"RÃ©solution, modÃ©lisation",tip:"ð¡ Ãquation = balance. MÃªme opÃ©ration des deux cÃ´tÃ©s. VÃ©rifie toujours !",exercises:[
-    {skill:"Ãquations",q:"RÃ©sous :\n\na) 4â7x = 5xâ2\nb) 4(3xâ2)â10x = 3xâ1\nc) x/2â3 = (2x+1)/2",hint:"c) Multiplie tout par 2.",sol:"a) x=1/2\nb) x=â7\nc) x=â7"},
-    {skill:"Ãquations type ECE",q:"RÃ©sous :\n\na) 5xâ3 = 3xâ1\nb) 3xâ1 = â2x+3\nc) 2(x+1)â3x = 4â2(x+1)",hint:"c) DÃ©veloppe les deux membres.",sol:"a) x=1\nb) x=4/5\nc) x=0"},
-    {skill:"ModÃ©lisation Ã©quation",q:"Un pÃ¨re a 3 fois l'Ã¢ge de son fils. Dans 12 ans, il aura le double.\n\nPose une Ã©quation. RÃ©sous.",hint:"x=fils, 3x=pÃ¨re. 3x+12=2(x+12).",sol:"x=12 ans. VÃ©rif: 48=2Ã24 â"}
+  {day:6,topic:"Équations du 1er degré",sub:"Résolution, modélisation",tip:"💡 Équation = balance. Même opération des deux côtés. Vérifie toujours !",exercises:[
+    {skill:"Équations",q:"Résous :\n\na) 4−7x = 5x−2\nb) 4(3x−2)−10x = 3x−1\nc) x/2−3 = (2x+1)/2",hint:"c) Multiplie tout par 2.",sol:"a) x=1/2\nb) x=−7\nc) x=−7"},
+    {skill:"Équations type ECE",q:"Résous :\n\na) 5x−3 = 3x−1\nb) 3x−1 = −2x+3\nc) 2(x+1)−3x = 4−2(x+1)",hint:"c) Développe les deux membres.",sol:"a) x=1\nb) x=4/5\nc) x=0"},
+    {skill:"Modélisation équation",q:"Un père a 3 fois l'âge de son fils. Dans 12 ans, il aura le double.\n\nPose une équation. Résous.",hint:"x=fils, 3x=père. 3x+12=2(x+12).",sol:"x=12 ans. Vérif: 48=2×24 ✓"}
   ]},
-  {day:7,topic:"ProportionnalitÃ©",sub:"Graphique, pourcentages, coefficient",tip:"ð¡ ProportionnalitÃ© = droite par l'ORIGINE. Augmentation % = (Ã©cartÃ·initial)Ã100.",exercises:[
-    {skill:"Identifier proportionnalitÃ©",q:"10L d'eau â 10,8L de glace.\n\na) Proportionnel ? Justifie.\nb) % d'augmentation lors du gel.",hint:"Rapport constant ? (10,8â10)/10Ã100.",sol:"a) Oui, k=1,08\nb) 8%"},
-    {skill:"Pourcentages successifs",q:"NaÃ«lle : 150cm Ã  9 ans. +10% Ã  10 ans, +10% Ã  11 ans.\n\na) Taille Ã  11 ans ?\nb) Augmentation exactement 20% ? Justifie.",hint:"Ã1,10 deux fois. 1,10Â²=?",sol:"a) 181,5cm\nb) Non: +21% car 1,10Â²=1,21"},
-    {skill:"Pourcentage de rÃ©duction",q:"TÃ©lÃ©phone : 255â¬ au lieu de 300â¬.\n\n% de rÃ©duction (arrondi) ?",hint:"(300â255)/300Ã100",sol:"15%"}
+  {day:7,topic:"Proportionnalité",sub:"Graphique, pourcentages, coefficient",tip:"💡 Proportionnalité = droite par l'ORIGINE. Augmentation % = (écart÷initial)×100.",exercises:[
+    {skill:"Identifier proportionnalité",q:"10L d'eau → 10,8L de glace.\n\na) Proportionnel ? Justifie.\nb) % d'augmentation lors du gel.",hint:"Rapport constant ? (10,8−10)/10×100.",sol:"a) Oui, k=1,08\nb) 8%"},
+    {skill:"Pourcentages successifs",q:"Naëlle : 150cm à 9 ans. +10% à 10 ans, +10% à 11 ans.\n\na) Taille à 11 ans ?\nb) Augmentation exactement 20% ? Justifie.",hint:"×1,10 deux fois. 1,10²=?",sol:"a) 181,5cm\nb) Non: +21% car 1,10²=1,21"},
+    {skill:"Pourcentage de réduction",q:"Téléphone : 255€ au lieu de 300€.\n\n% de réduction (arrondi) ?",hint:"(300−255)/300×100",sol:"15%"}
   ]},
-  {day:8,topic:"Grandeurs composÃ©es",sub:"Vitesse, durÃ©e, distance, conversions",tip:"ð¡ v=d/t. m/sâkm/h: Ã3,6. Toujours vÃ©rifier la cohÃ©rence des unitÃ©s !",exercises:[
-    {skill:"Vitesse moyenne",q:"Chien : aller-retour MâT (600m) en 1min 20s.\n\na) Vitesse en m/s ?\nb) En km/h ?",hint:"Distance=1200m. DurÃ©e=80s. Ã3,6.",sol:"a) 15m/s\nb) 54km/h"},
-    {skill:"DurÃ©e & conversion",q:"PiÃ©ton Ã  4km/h.\n\na) Minutes pour 1,6km ?\nb) 1h 12min en heures dÃ©cimales ?",hint:"t=d/v. 12min=12/60h.",sol:"a) 24min\nb) 1,2h"},
-    {skill:"Masse volumique",q:"Plomb : 11,35g/cmÂ³.\n\nPoids d'un cube d'arÃªte 10cm ?",hint:"V=10Â³=1000cmÂ³.",sol:"11350g = 11,35kg"}
+  {day:8,topic:"Grandeurs composées",sub:"Vitesse, durée, distance, conversions",tip:"💡 v=d/t. m/s→km/h: ×3,6. Toujours vérifier la cohérence des unités !",exercises:[
+    {skill:"Vitesse moyenne",q:"Chien : aller-retour M–T (600m) en 1min 20s.\n\na) Vitesse en m/s ?\nb) En km/h ?",hint:"Distance=1200m. Durée=80s. ×3,6.",sol:"a) 15m/s\nb) 54km/h"},
+    {skill:"Durée & conversion",q:"Piéton à 4km/h.\n\na) Minutes pour 1,6km ?\nb) 1h 12min en heures décimales ?",hint:"t=d/v. 12min=12/60h.",sol:"a) 24min\nb) 1,2h"},
+    {skill:"Masse volumique",q:"Plomb : 11,35g/cm³.\n\nPoids d'un cube d'arête 10cm ?",hint:"V=10³=1000cm³.",sol:"11350g = 11,35kg"}
   ]},
-  {day:9,topic:"ThÃ©orÃ¨me de Pythagore",sub:"Calcul, rÃ©ciproque, contraposÃ©e",tip:"ð¡ RÃ©dige : 'Dans le triangle ABC rectangle en B, d'aprÃ¨s Pythagore : ACÂ²=ABÂ²+BCÂ²'",exercises:[
-    {skill:"Pythagore terrain foot",q:"Terrain ABCD : AB=80m, BC=60m. H=pied hauteur issue de B dans â³ABC.\n\n1. AC ?\n2. Aire â³ABC ?\n3. BH ?",hint:"Aire=ABÃBC/2=ACÃBH/2.",sol:"1. 100m\n2. 2400mÂ²\n3. 48m"},
-    {skill:"RÃ©ciproque Pythagore",q:"Triangle : 40cm, 50cm, 60cm.\n\nRectangle ? Justifie.",hint:"60Â²=3600. 40Â²+50Â²=?",sol:"4100â 3600 â non rectangle"},
-    {skill:"Pythagore routes",q:"ElvireâDoumet=50km â¥ DoumetâCroix=120km.\n\n1. ElvireâCroix ?\n2. Distance gagnÃ©e vs ancienne route (170km) ?",hint:"Angle droit en Doumet.",sol:"1. 130km\n2. 40km de gain"}
+  {day:9,topic:"Théorème de Pythagore",sub:"Calcul, réciproque, contraposée",tip:"💡 Rédige : 'Dans le triangle ABC rectangle en B, d'après Pythagore : AC²=AB²+BC²'",exercises:[
+    {skill:"Pythagore terrain foot",q:"Terrain ABCD : AB=80m, BC=60m. H=pied hauteur issue de B dans △ABC.\n\n1. AC ?\n2. Aire △ABC ?\n3. BH ?",hint:"Aire=AB×BC/2=AC×BH/2.",sol:"1. 100m\n2. 2400m²\n3. 48m"},
+    {skill:"Réciproque Pythagore",q:"Triangle : 40cm, 50cm, 60cm.\n\nRectangle ? Justifie.",hint:"60²=3600. 40²+50²=?",sol:"4100≠3600 → non rectangle"},
+    {skill:"Pythagore routes",q:"Elvire–Doumet=50km ⊥ Doumet–Croix=120km.\n\n1. Elvire–Croix ?\n2. Distance gagnée vs ancienne route (170km) ?",hint:"Angle droit en Doumet.",sol:"1. 130km\n2. 40km de gain"}
   ]},
-  {day:10,topic:"SymÃ©tries & Transformations",sub:"Axiale, centrale, translation, rotation",tip:"ð¡ Toutes les isomÃ©tries conservent longueurs et angles. La symÃ©trie inverse l'orientation.",exercises:[
-    {skill:"PropriÃ©tÃ©s isomÃ©tries",q:"a) DiffÃ©rence symÃ©trie axiale vs centrale ?\nb) 2 propriÃ©tÃ©s communes.\nc) Rotation 180Â° autour de O = ?",hint:"c) Compare avec symÃ©trie centrale.",sol:"a) Axiale:axe=droite. Centrale:O milieu de [A,A'].\nb) Conservent longueurs et angles.\nc) SymÃ©trie centrale de centre O"},
-    {skill:"Triangle Ã©quilatÃ©ral symÃ©trie",q:"ABC Ã©quilatÃ©ral cÃ´tÃ© 1cm. D symÃ©trique de B par rapport Ã  C.\n\na) Angle BAC ?\nb) Angle CAD ?\nc) ABD rectangle en A ?\nd) AD exacte.",hint:"BC=CD=1cm. Angles=60Â°.",sol:"a) 60Â°\nb) 60Â°\nc) Oui, angle BAD=90Â°\nd) â3cm"},
-    {skill:"Translation pavage",q:"a) DÃ©finis une translation.\nb) Transformation d'un quadrilatÃ¨re sur son voisin (mÃªme sens) ?\nc) Transformation qui change l'orientation ?",hint:"Orientation = sens des sommets.",sol:"a) AA'=vecteur v constant\nb) Translation\nc) SymÃ©trie"}
+  {day:10,topic:"Symétries & Transformations",sub:"Axiale, centrale, translation, rotation",tip:"💡 Toutes les isométries conservent longueurs et angles. La symétrie inverse l'orientation.",exercises:[
+    {skill:"Propriétés isométries",q:"a) Différence symétrie axiale vs centrale ?\nb) 2 propriétés communes.\nc) Rotation 180° autour de O = ?",hint:"c) Compare avec symétrie centrale.",sol:"a) Axiale:axe=droite. Centrale:O milieu de [A,A'].\nb) Conservent longueurs et angles.\nc) Symétrie centrale de centre O"},
+    {skill:"Triangle équilatéral symétrie",q:"ABC équilatéral côté 1cm. D symétrique de B par rapport à C.\n\na) Angle BAC ?\nb) Angle CAD ?\nc) ABD rectangle en A ?\nd) AD exacte.",hint:"BC=CD=1cm. Angles=60°.",sol:"a) 60°\nb) 60°\nc) Oui, angle BAD=90°\nd) √3cm"},
+    {skill:"Translation pavage",q:"a) Définis une translation.\nb) Transformation d'un quadrilatère sur son voisin (même sens) ?\nc) Transformation qui change l'orientation ?",hint:"Orientation = sens des sommets.",sol:"a) AA'=vecteur v constant\nb) Translation\nc) Symétrie"}
   ]},
-  {day:11,topic:"Expressions littÃ©rales & Aires",sub:"PÃ©rimÃ¨tre, aire, Ã©quation",tip:"ð¡ Exprime en x, simplifie, rÃ©sous. VÃ©rifie en substituant !",exercises:[
-    {skill:"Deux rectangles mÃªme aire",q:"Trouve x : Rectangle 1 (8Ã5) = Rectangle 2 (xÃ11)",hint:"8Ã5=xÃ11",sol:"x=40/11â3,6cm"},
-    {skill:"PÃ©rimÃ¨tre en x",q:"BE=DG=15m, GC=2x, EC=x.\n\na) Montre P(jardin)=6(x+10)\nb) Aire maison FECG ?\nc) x=8m : aire jardin ?",hint:"b) xÃ2x. c) Jardin=TerrainâMaison.",sol:"a) 6(x+10)â\nb) 2xÂ²\nc) 337mÂ²"},
-    {skill:"D=E rÃ©solution",q:"D=(x+4)â(2xâ1) et E=2(x+3)+5\n\na) D et E pour x=â2\nb) RÃ©duis D et E\nc) RÃ©sous D=E",hint:"D=âx+5. E=2x+11.",sol:"a) D=7, E=7\nb) D=âx+5, E=2x+11\nc) x=â2"}
+  {day:11,topic:"Expressions littérales & Aires",sub:"Périmètre, aire, équation",tip:"💡 Exprime en x, simplifie, résous. Vérifie en substituant !",exercises:[
+    {skill:"Deux rectangles même aire",q:"Trouve x : Rectangle 1 (8×5) = Rectangle 2 (x×11)",hint:"8×5=x×11",sol:"x=40/11≈3,6cm"},
+    {skill:"Périmètre en x",q:"BE=DG=15m, GC=2x, EC=x.\n\na) Montre P(jardin)=6(x+10)\nb) Aire maison FECG ?\nc) x=8m : aire jardin ?",hint:"b) x×2x. c) Jardin=Terrain−Maison.",sol:"a) 6(x+10)✓\nb) 2x²\nc) 337m²"},
+    {skill:"D=E résolution",q:"D=(x+4)−(2x−1) et E=2(x+3)+5\n\na) D et E pour x=−2\nb) Réduis D et E\nc) Résous D=E",hint:"D=−x+5. E=2x+11.",sol:"a) D=7, E=7\nb) D=−x+5, E=2x+11\nc) x=−2"}
   ]},
-  {day:12,topic:"RÃ©visions Calcul â Type Sujet",sub:"PiÃ¨ges frÃ©quents, QCM justifiÃ©s",tip:"ð¡ Sur le vrai sujet : DÃTAILLE chaque Ã©tape mÃªme pour les QCM !",exercises:[
-    {skill:"Calcul complet",q:"Calcule D :\n\nD = 4/5 Ã (5/4+1) â 3/10",hint:"5/4+1=9/4.",sol:"3/2"},
-    {skill:"QCM Ã©criture scientifique",q:"302,4 Ã 10Â¹â¸ = ?\n\nA) 3,024Ã10Â¹â¶\nB) 3,024Ã10Â²â°\nC) 0,3024Ã10Â²Â¹\n\nChoisis et justifie.",hint:"302,4=3,024Ã10Â²",sol:"B: 3,024Ã10Â²â°"},
-    {skill:"QCM Pythagore",q:"Diagonale d'un carrÃ© de cÃ´tÃ© 6cm :\n\nA) â8,5cm  B) 6cm  C) â12cm\n\nChoisis et justifie.",hint:"dÂ²=6Â²+6Â²=72",sol:"A: 6â2â8,49cm"}
+  {day:12,topic:"Révisions Calcul — Type Sujet",sub:"Pièges fréquents, QCM justifiés",tip:"💡 Sur le vrai sujet : DÉTAILLE chaque étape même pour les QCM !",exercises:[
+    {skill:"Calcul complet",q:"Calcule D :\n\nD = 4/5 × (5/4+1) − 3/10",hint:"5/4+1=9/4.",sol:"3/2"},
+    {skill:"QCM écriture scientifique",q:"302,4 × 10¹⁸ = ?\n\nA) 3,024×10¹⁶\nB) 3,024×10²⁰\nC) 0,3024×10²¹\n\nChoisis et justifie.",hint:"302,4=3,024×10²",sol:"B: 3,024×10²⁰"},
+    {skill:"QCM Pythagore",q:"Diagonale d'un carré de côté 6cm :\n\nA) ≈8,5cm  B) 6cm  C) ≈12cm\n\nChoisis et justifie.",hint:"d²=6²+6²=72",sol:"A: 6√2≈8,49cm"}
   ]},
-  {day:13,topic:"RÃ©visions GÃ©omÃ©trie â Type Sujet",sub:"Pythagore + transformations + problÃ¨me",tip:"ð¡ Avant-dernier jour ! RÃ©dige proprement, cite les thÃ©orÃ¨mes, montre TOUS tes calculs.",exercises:[
-    {skill:"Pythagore complet",q:"Triangle rectangle en B : AB=9cm, BC=12cm.\n\na) AC ?\nb) Aire ?\nc) BH (hauteur issue de B) ?",hint:"Aire=ACÃBH/2=ABÃBC/2.",sol:"a) 15cm\nb) 54cmÂ²\nc) 7,2cm"},
-    {skill:"Ãconomies Lucille",q:"Nouvelle route=130km. Ancienne=170km.\n6L/100km, 1,50â¬/L, 20j/mois.\n\nÃconomies mensuelles ?",hint:"Gain AR/j=80km.",sol:"144â¬/mois"},
-    {skill:"Vrai ou Faux transformations",q:"Vrai ou faux, justifie :\n\na) Rotation conserve les longueurs.\nb) SymÃ©trie centrale change l'orientation.\nc) Rotation 180Â°/O â  symÃ©trie centrale de centre O.",hint:"c) Sont-elles identiques ?",sol:"a)VRAI b)VRAI c)FAUX"}
+  {day:13,topic:"Révisions Géométrie — Type Sujet",sub:"Pythagore + transformations + problème",tip:"💡 Avant-dernier jour ! Rédige proprement, cite les théorèmes, montre TOUS tes calculs.",exercises:[
+    {skill:"Pythagore complet",q:"Triangle rectangle en B : AB=9cm, BC=12cm.\n\na) AC ?\nb) Aire ?\nc) BH (hauteur issue de B) ?",hint:"Aire=AC×BH/2=AB×BC/2.",sol:"a) 15cm\nb) 54cm²\nc) 7,2cm"},
+    {skill:"Économies Lucille",q:"Nouvelle route=130km. Ancienne=170km.\n6L/100km, 1,50€/L, 20j/mois.\n\nÉconomies mensuelles ?",hint:"Gain AR/j=80km.",sol:"144€/mois"},
+    {skill:"Vrai ou Faux transformations",q:"Vrai ou faux, justifie :\n\na) Rotation conserve les longueurs.\nb) Symétrie centrale change l'orientation.\nc) Rotation 180°/O ≠ symétrie centrale de centre O.",hint:"c) Sont-elles identiques ?",sol:"a)VRAI b)VRAI c)FAUX"}
   ]},
-  {day:14,topic:"Grand EntraÃ®nement ECE 3",sub:"Sujet complet â conditions d'examen",tip:"ð¯ Dernier jour ! Lis chaque question 2 fois. RÃ©dige proprement. Justifie tout.",exercises:[
-    {skill:"Calcul numÃ©rique",q:"EXERCICE 1\n\na) 9Ã6â[7â8Ã(â3+5)]\nb) 4/5Ã(5/4+1)â3/10\nc) 2Ã2â´â°â°\nd) Ãcriture scientifique de 302,4Ã10Â¹â¸",hint:"Exercices dÃ©jÃ  vus !",sol:"a)63 b)3/2 c)2^401 d)3,024Ã10^20"},
-    {skill:"AlgÃ¨bre complÃ¨te",q:"EXERCICE 2\n\n1. Factorise : zâ6zÂ² ; 36xyÂ³â12xÂ²yÂ²+60xÂ³yâ´\n2. RÃ©sous : 4â7x=5xâ2 ; 4(3xâ2)â10x=3xâ1\n3. C=(2xâ3)(4â5x)â(4â5x)\n   a)C pour x=2  b)DÃ©veloppe  c)Factorise",hint:"Tout a Ã©tÃ© vu !",sol:"1.z(1â6z);12xyÂ²(...)\n2.x=1/2;x=â7\n3.a)0 b)â10xÂ²+28xâ16 c)2(4â5x)(xâ2)"},
-    {skill:"GÃ©omÃ©trie & problÃ¨me",q:"EXERCICE 3\n\nTerrain AB=80m, BC=60m, H=pied hauteur issue de B.\n1.AC ?  2.Aire â³ABC ?  3.BH ?  4.Joueur BâH Ã  15m/s : durÃ©e ?",hint:"4)t=d/v",sol:"1.100m 2.2400mÂ² 3.48m 4.3,2s"}
+  {day:14,topic:"Grand Entraînement ECE 3",sub:"Sujet complet — conditions d'examen",tip:"🎯 Dernier jour ! Lis chaque question 2 fois. Rédige proprement. Justifie tout.",exercises:[
+    {skill:"Calcul numérique",q:"EXERCICE 1\n\na) 9×6−[7−8×(−3+5)]\nb) 4/5×(5/4+1)−3/10\nc) 2×2⁴⁰⁰\nd) Écriture scientifique de 302,4×10¹⁸",hint:"Exercices déjà vus !",sol:"a)63 b)3/2 c)2^401 d)3,024×10^20"},
+    {skill:"Algèbre complète",q:"EXERCICE 2\n\n1. Factorise : z−6z² ; 36xy³−12x²y²+60x³y⁴\n2. Résous : 4−7x=5x−2 ; 4(3x−2)−10x=3x−1\n3. C=(2x−3)(4−5x)−(4−5x)\n   a)C pour x=2  b)Développe  c)Factorise",hint:"Tout a été vu !",sol:"1.z(1−6z);12xy²(...)\n2.x=1/2;x=−7\n3.a)0 b)−10x²+28x−16 c)2(4−5x)(x−2)"},
+    {skill:"Géométrie & problème",q:"EXERCICE 3\n\nTerrain AB=80m, BC=60m, H=pied hauteur issue de B.\n1.AC ?  2.Aire △ABC ?  3.BH ?  4.Joueur B→H à 15m/s : durée ?",hint:"4)t=d/v",sol:"1.100m 2.2400m² 3.48m 4.3,2s"}
   ]}
 ];
 
@@ -421,7 +394,7 @@ function getWorstSkill(){const w=getWeakSkills();return w.length?w[0]:null;}
 
 async function generateRemedialExercise(skill,score){
   if(remedialBank[skill])return remedialBank[skill];
-  const prompt=`Tu es prof de maths ECE3 EIB Paris, 4Ã¨me, sans calculatrice.\nL'Ã©lÃ¨ve a eu ${score}/100 sur "${skill}".\nGÃ©nÃ¨re UN exercice de rattrapage (lÃ©gÃ¨rement plus simple).\nRÃ©ponds UNIQUEMENT en JSON valide (pas de markdown) :\n{"q":"Ã©noncÃ© (\\n pour sauts de ligne)","hint":"indice court","sol":"solution Ã©tape par Ã©tape"}`;
+  const prompt=`Tu es prof de maths ECE3 EIB Paris, 4ème, sans calculatrice.\nL'élève a eu ${score}/100 sur "${skill}".\nGénère UN exercice de rattrapage (légèrement plus simple).\nRéponds UNIQUEMENT en JSON valide (pas de markdown) :\n{"q":"énoncé (\\n pour sauts de ligne)","hint":"indice court","sol":"solution étape par étape"}`;
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:600,messages:[{role:'user',content:prompt}]})});
     const data=await resp.json();
@@ -429,7 +402,7 @@ async function generateRemedialExercise(skill,score){
     parsed.skill=skill;parsed.isRemedial=true;
     remedialBank[skill]=parsed;saveRemedial();
     return parsed;
-  }catch(e){return {skill,isRemedial:true,q:"Rattrapage : "+skill+"\n\nRevois tes notes et refais les exercices du jour prÃ©cÃ©dent.",hint:"Consulte le jour prÃ©cÃ©dent.",sol:"Retravailler ce point."};}
+  }catch(e){return {skill,isRemedial:true,q:"Rattrapage : "+skill+"\n\nRevois tes notes et refais les exercices du jour précédent.",hint:"Consulte le jour précédent.",sol:"Retravailler ce point."};}
 }
 
 function renderHome(){
@@ -438,11 +411,11 @@ function renderHome(){
   const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
   const weak=getWeakSkills();
   document.getElementById('sDone').textContent=done+'/14';
-  document.getElementById('sAvg').textContent=avg?avg+'/100':'â';
-  document.getElementById('sWeak').textContent=weak.length?weak.length+' point'+(weak.length>1?'s':''):'â Aucun';
+  document.getElementById('sAvg').textContent=avg?avg+'/100':'—';
+  document.getElementById('sWeak').textContent=weak.length?weak.length+' point'+(weak.length>1?'s':''):'✅ Aucun';
   document.getElementById('hDay').textContent='Jour '+Math.min(done+1,14)+'/14';
-  document.getElementById('hScore').textContent=avg?'Moy: '+avg+'/100':'Moyenne â';
-  // Affiche le banner exam si au moins 3 jours complÃ©tÃ©s
+  document.getElementById('hScore').textContent=avg?'Moy: '+avg+'/100':'Moyenne —';
+  // Affiche le banner exam si au moins 3 jours complétés
   document.getElementById('examBanner').style.display=done>=3?'flex':'none';
   ['wk1','wk2'].forEach(id=>{document.getElementById(id).innerHTML='';});
   const today=getTodayDay();
@@ -451,7 +424,7 @@ function renderHome(){
     const hasRem=!isDone&&d.day===today&&getWorstSkill()!==null&&d.day>1;
     const el=document.createElement('div');
     el.className='day-card'+(isDone?' done':'')+(isToday?' today':'')+(locked?' locked':'');
-    el.innerHTML='<div class="dc-num">Jour '+d.day+'</div><div class="dc-topic">'+d.topic+'</div><div class="dc-sub">'+d.sub+'</div><div class="dc-badge">'+(isDone?'â':isToday?'â¶':'ð')+'</div>'+(isDone&&p.score!=null?'<div class="dc-score">'+p.score+'/100</div>':'')+(hasRem?'<div class="dc-remedial">+rattrapage</div>':'');
+    el.innerHTML='<div class="dc-num">Jour '+d.day+'</div><div class="dc-topic">'+d.topic+'</div><div class="dc-sub">'+d.sub+'</div><div class="dc-badge">'+(isDone?'✅':isToday?'▶':'🔒')+'</div>'+(isDone&&p.score!=null?'<div class="dc-score">'+p.score+'/100</div>':'')+(hasRem?'<div class="dc-remedial">+rattrapage</div>':'');
     if(!locked)el.onclick=()=>startDay(d.day);
     document.getElementById(i<7?'wk1':'wk2').appendChild(el);
   });
@@ -463,16 +436,16 @@ async function startDay(d){
   const plan=PLAN.find(p=>p.day===d);
   S.day=d;S.exIdx=0;S.secs=0;S.inputMode={};
   S.exercises=plan.exercises.map(e=>({...e}));
-  document.getElementById('exTag').textContent='Jour '+d+' Â· Programme ECE3';
+  document.getElementById('exTag').textContent='Jour '+d+' · Programme ECE3';
   document.getElementById('exTitle').textContent=plan.topic;
   document.getElementById('tipArea').innerHTML='<div class="tip-banner"><span class="ti">'+plan.tip.split(' ')[0]+'</span><span>'+plan.tip.slice(plan.tip.indexOf(' ')+1)+'</span></div>';
   document.getElementById('remedialArea').innerHTML='';
   const worst=getWorstSkill();
   if(d>1&&worst){
     showScreen('sEx');startTimer();
-    document.getElementById('remedialArea').innerHTML='<div class="gen-banner"><div class="ld"><span></span><span></span><span></span></div><div><strong>GÃ©nÃ©ration du rattrapage...</strong><br>Point : '+worst.skill+' ('+worst.score+'/100)</div></div>';
+    document.getElementById('remedialArea').innerHTML='<div class="gen-banner"><div class="ld"><span></span><span></span><span></span></div><div><strong>Génération du rattrapage...</strong><br>Point : '+worst.skill+' ('+worst.score+'/100)</div></div>';
     document.getElementById('exContainer').innerHTML='';
-    try{const remEx=await generateRemedialExercise(worst.skill,worst.score);S.exercises=[remEx,...S.exercises];document.getElementById('remedialArea').innerHTML='<div class="remedial-banner"><span class="ti">ð</span><div><strong>Rattrapage : '+worst.skill+'</strong><br>Score prÃ©cÃ©dent : '+worst.score+'/100</div></div>';}
+    try{const remEx=await generateRemedialExercise(worst.skill,worst.score);S.exercises=[remEx,...S.exercises];document.getElementById('remedialArea').innerHTML='<div class="remedial-banner"><span class="ti">🔄</span><div><strong>Rattrapage : '+worst.skill+'</strong><br>Score précédent : '+worst.score+'/100</div></div>';}
     catch(e){document.getElementById('remedialArea').innerHTML='';}
   }else{showScreen('sEx');startTimer();}
   S.answers=S.exercises.map(()=>({text:'',photoB64:null,photoMime:null,corr:null,score:null}));
@@ -484,13 +457,13 @@ function renderEx(){
   const ex=S.exercises[S.exIdx],ans=S.answers[S.exIdx],total=S.exercises.length,isRemedial=!!ex.isRemedial,mode=S.inputMode[S.exIdx]||'photo';
   document.getElementById('progFill').style.width=(S.exIdx/total*100)+'%';
   document.getElementById('progCount').textContent=(S.exIdx+1)+'/'+total;
-  const labelSpan=isRemedial?'<span class="remedial">ð Rattrapage Â· '+ex.skill+'</span>':'<span>Exercice '+(S.exIdx+1)+'/'+total+'</span> '+ex.skill;
-  const photoPreviewHtml=ans.photoB64?'<div class="photo-preview"><img src="data:'+ans.photoMime+';base64,'+ans.photoB64+'" alt="Ta rÃ©ponse"/><button class="photo-remove" onclick="removePhoto()">Ã</button></div><div class="photo-tip">ð¸ Photo prÃªte !</div>':'';
-  const photoZoneHtml='<div class="photo-zone" id="photoZone" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="handleDrop(event)"><input type="file" accept="image/*" capture="environment" onchange="handleFile(this.files[0])"><div class="photo-zone-icon">ð·</div><div class="photo-zone-text"><strong>Prends une photo de ta feuille</strong>Sur tÃ©lÃ©phone/tablette : appuie pour ouvrir l\'appareil photo<br>Sur ordi : clique pour choisir une image</div></div>'+photoPreviewHtml;
-  const textZoneHtml='<textarea class="ans-ta" id="ua" placeholder="Ou tape ta rÃ©ponse ici...">'+ans.text+'</textarea>';
-  document.getElementById('exContainer').innerHTML='<div class="ex-card'+(isRemedial?' remedial-card':'')+'"><div class="ex-num-label">'+labelSpan+'</div><div class="ex-text">'+ex.q.replace(/\n/g,'<br>')+'</div><div class="ans-area"><div class="ans-label">âï¸ Ta rÃ©ponse :</div><div class="ans-tabs"><button class="ans-tab'+(mode==='photo'?' active':'')+'" onclick="setMode(\'photo\')">ð· Photo manuscrite</button><button class="ans-tab'+(mode==='text'?' active':'')+'" onclick="setMode(\'text\')">â¨ï¸ Taper</button></div><div id="modePhoto" style="display:'+(mode==='photo'?'block':'none')+'">'+photoZoneHtml+'</div><div id="modeText" style="display:'+(mode==='text'?'block':'none')+'">'+textZoneHtml+'</div><div class="ans-actions"><button class="btn btn-ghost" onclick="showHint()">ð­ Indice</button><button class="btn btn-cta" id="bsub" onclick="submitAnswer()">Faire corriger par l\'IA â¦</button></div></div><div id="corrArea">'+(ans.corr?renderCorr(ans.corr,ans.score):'')+'</div></div>';
+  const labelSpan=isRemedial?'<span class="remedial">🔄 Rattrapage · '+ex.skill+'</span>':'<span>Exercice '+(S.exIdx+1)+'/'+total+'</span> '+ex.skill;
+  const photoPreviewHtml=ans.photoB64?'<div class="photo-preview"><img src="data:'+ans.photoMime+';base64,'+ans.photoB64+'" alt="Ta réponse"/><button class="photo-remove" onclick="removePhoto()">×</button></div><div class="photo-tip">📸 Photo prête !</div>':'';
+  const photoZoneHtml='<div class="photo-zone" id="photoZone" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="handleDrop(event)"><input type="file" accept="image/*" capture="environment" onchange="handleFile(this.files[0])"><div class="photo-zone-icon">📷</div><div class="photo-zone-text"><strong>Prends une photo de ta feuille</strong>Sur téléphone/tablette : appuie pour ouvrir l\'appareil photo<br>Sur ordi : clique pour choisir une image</div></div>'+photoPreviewHtml;
+  const textZoneHtml='<textarea class="ans-ta" id="ua" placeholder="Ou tape ta réponse ici...">'+ans.text+'</textarea>';
+  document.getElementById('exContainer').innerHTML='<div class="ex-card'+(isRemedial?' remedial-card':'')+'"><div class="ex-num-label">'+labelSpan+'</div><div class="ex-text">'+ex.q.replace(/\n/g,'<br>')+'</div><div class="ans-area"><div class="ans-label">✏️ Ta réponse :</div><div class="ans-tabs"><button class="ans-tab'+(mode==='photo'?' active':'')+'" onclick="setMode(\'photo\')">📷 Photo manuscrite</button><button class="ans-tab'+(mode==='text'?' active':'')+'" onclick="setMode(\'text\')">⌨️ Taper</button></div><div id="modePhoto" style="display:'+(mode==='photo'?'block':'none')+'">'+photoZoneHtml+'</div><div id="modeText" style="display:'+(mode==='text'?'block':'none')+'">'+textZoneHtml+'</div><div class="ans-actions"><button class="btn btn-ghost" onclick="showHint()">💭 Indice</button><button class="btn btn-cta" id="bsub" onclick="submitAnswer()">Faire corriger par l\'IA ✦</button></div></div><div id="corrArea">'+(ans.corr?renderCorr(ans.corr,ans.score):'')+'</div></div>';
   document.getElementById('btnPrev').style.display=S.exIdx===0?'none':'inline-flex';
-  document.getElementById('btnNext').textContent=S.exIdx===total-1?'Terminer la session â':'Suivant â';
+  document.getElementById('btnNext').textContent=S.exIdx===total-1?'Terminer la session ✓':'Suivant →';
   const ta=document.getElementById('ua');if(ta)ta.addEventListener('input',e=>{S.answers[S.exIdx].text=e.target.value;});
 }
 function setMode(m){S.inputMode[S.exIdx]=m;document.getElementById('modePhoto').style.display=m==='photo'?'block':'none';document.getElementById('modeText').style.display=m==='text'?'block':'none';document.querySelectorAll('.ans-tab').forEach((t,i)=>t.classList.toggle('active',i===(m==='photo'?0:1)));}
@@ -500,13 +473,13 @@ function removePhoto(){S.answers[S.exIdx].photoB64=null;S.answers[S.exIdx].photo
 
 async function submitAnswer(){
   const ans=S.answers[S.exIdx],mode=S.inputMode[S.exIdx]||'photo',ex=S.exercises[S.exIdx];
-  if(mode==='photo'&&!ans.photoB64){alert('ð· Prends d\'abord une photo de ta feuille !');return;}
-  if(mode==='text'&&!document.getElementById('ua')?.value.trim()){alert('Ãcris ta rÃ©ponse d\'abord !');return;}
+  if(mode==='photo'&&!ans.photoB64){alert('📷 Prends d\'abord une photo de ta feuille !');return;}
+  if(mode==='text'&&!document.getElementById('ua')?.value.trim()){alert('Écris ta réponse d\'abord !');return;}
   if(mode==='text')S.answers[S.exIdx].text=document.getElementById('ua').value.trim();
-  document.getElementById('corrArea').innerHTML='<div class="corr-box half" style="border-color:var(--border)"><div class="corr-head">ð¤ Correction en cours...</div><div class="ld"><span></span><span></span><span></span></div></div>';
+  document.getElementById('corrArea').innerHTML='<div class="corr-box half" style="border-color:var(--border)"><div class="corr-head">🤖 Correction en cours...</div><div class="ld"><span></span><span></span><span></span></div></div>';
   document.getElementById('bsub').disabled=true;
-  const sys=`Tu es un professeur de maths bienveillant, ECE3 EIB Paris, 4Ã¨me, sans calculatrice.${ex.isRemedial?' RATTRAPAGE â sois particuliÃ¨rement encourageant.':''}\nEXERCICE (${ex.skill}) :\n${ex.q}\nSOLUTION :\n${ex.sol}\nCorrige :\n1. Commentaire global (1-2 phrases)\n2. Correction Ã©tape par Ã©tape\n3. Si erreur : explique et corrige\n4. Conseil mÃ©thode ECE3\nTermine par : SCORE: [0-100]`;
-  const uc=mode==='photo'?[{type:'image',source:{type:'base64',media_type:ans.photoMime,data:ans.photoB64}},{type:'text',text:'Ma rÃ©ponse manuscrite. Corrige-la.'}]:[{type:'text',text:'Ma rÃ©ponse :\n'+ans.text}];
+  const sys=`Tu es un professeur de maths bienveillant, ECE3 EIB Paris, 4ème, sans calculatrice.${ex.isRemedial?' RATTRAPAGE — sois particulièrement encourageant.':''}\nEXERCICE (${ex.skill}) :\n${ex.q}\nSOLUTION :\n${ex.sol}\nCorrige :\n1. Commentaire global (1-2 phrases)\n2. Correction étape par étape\n3. Si erreur : explique et corrige\n4. Conseil méthode ECE3\nTermine par : SCORE: [0-100]`;
+  const uc=mode==='photo'?[{type:'image',source:{type:'base64',media_type:ans.photoMime,data:ans.photoB64}},{type:'text',text:'Ma réponse manuscrite. Corrige-la.'}]:[{type:'text',text:'Ma réponse :\n'+ans.text}];
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,system:sys,messages:[{role:'user',content:uc}]})});
     const data=await resp.json();
@@ -518,8 +491,8 @@ async function submitAnswer(){
     document.getElementById('corrArea').innerHTML=renderCorr(corr,score);
     if(!ex.isRemedial){const dp=prog[S.day]||{};dp.skills=dp.skills||{};dp.skills[ex.skill]=score;prog[S.day]=dp;saveProg();}
     else if(score>=70){Object.keys(prog).forEach(k=>{if(prog[k]?.skills?.[ex.skill]!==undefined)prog[k].skills[ex.skill]=Math.max(prog[k].skills[ex.skill],score);});saveProg();delete remedialBank[ex.skill];saveRemedial();}
-    if(S.exIdx===S.exercises.length-1)document.getElementById('btnNext').textContent='Terminer la session â';
-  }catch(e){document.getElementById('corrArea').innerHTML='<div class="corr-box bad"><div class="corr-head">â ï¸ '+e.message+'</div><div class="corr-body">VÃ©rifie ta connexion ou ta clÃ© (âï¸).\n\nSolution :\n'+ex.sol+'</div></div>';}
+    if(S.exIdx===S.exercises.length-1)document.getElementById('btnNext').textContent='Terminer la session ✓';
+  }catch(e){document.getElementById('corrArea').innerHTML='<div class="corr-box bad"><div class="corr-head">⚠️ '+e.message+'</div><div class="corr-body">Vérifie ta connexion ou ta clé (⚙️).\n\nSolution :\n'+ex.sol+'</div></div>';}
   document.getElementById('bsub').disabled=false;
 }
 
@@ -531,38 +504,38 @@ async function endSession(){
   const scores=mainAnswers.map(a=>a.score).filter(s=>s!==null);
   const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
   prog[S.day]={...(prog[S.day]||{}),done:true,score:avg,secs:S.secs};saveProg();githubSaveWithIndicator();
-  const icon=avg>=80?'ð':avg>=55?'â­':'ðª';
-  const msg=avg>=80?'Excellent ! Tu maÃ®trises trÃ¨s bien ce chapitre.':avg>=55?'Bon travail ! Quelques points Ã  consolider.':'C\'Ã©tait difficile â l\'important est de comprendre la correction !';
+  const icon=avg>=80?'🏆':avg>=55?'⭐':'💪';
+  const msg=avg>=80?'Excellent ! Tu maîtrises très bien ce chapitre.':avg>=55?'Bon travail ! Quelques points à consolider.':'C\'était difficile — l\'important est de comprendre la correction !';
   document.getElementById('dIcon').textContent=icon;
-  document.getElementById('dTitle').textContent=avg>=80?'Excellent travail !':'Session terminÃ©e !';
-  document.getElementById('dMsg').textContent=msg+'\nâ± DurÃ©e : '+fmtTime(S.secs);
+  document.getElementById('dTitle').textContent=avg>=80?'Excellent travail !':'Session terminée !';
+  document.getElementById('dMsg').textContent=msg+'\n⏱ Durée : '+fmtTime(S.secs);
   document.getElementById('dScore').textContent=avg+'/100';
-  document.getElementById('dSkills').innerHTML=mainAnswers.map((a,i)=>{const cls=(a.score||0)>=75?'good':(a.score||0)>=40?'mid':'weak';const em=(a.score||0)>=75?'â':(a.score||0)>=40?'â ï¸':'â';return '<span class="sc '+cls+'">'+em+' '+(mainExs[i]?.skill||'')+'</span>';}).join('');
+  document.getElementById('dSkills').innerHTML=mainAnswers.map((a,i)=>{const cls=(a.score||0)>=75?'good':(a.score||0)>=40?'mid':'weak';const em=(a.score||0)>=75?'✅':(a.score||0)>=40?'⚠️':'❌';return '<span class="sc '+cls+'">'+em+' '+(mainExs[i]?.skill||'')+'</span>';}).join('');
   const nextWeak=getWeakSkills();
   const nextDay=S.day<14?PLAN.find(p=>p.day===S.day+1):null;
   const np=document.getElementById('nextPreview');
-  if(nextDay){np.style.display='block';np.innerHTML='<strong>Demain â Jour '+(S.day+1)+' : '+nextDay.topic+'</strong>'+(nextWeak.length?'<br>+ Rattrapage automatique : <span style="color:var(--warn)">'+nextWeak[0].skill+'</span>':'<br>â Aucun rattrapage nÃ©cessaire');}
+  if(nextDay){np.style.display='block';np.innerHTML='<strong>Demain — Jour '+(S.day+1)+' : '+nextDay.topic+'</strong>'+(nextWeak.length?'<br>+ Rattrapage automatique : <span style="color:var(--warn)">'+nextWeak[0].skill+'</span>':'<br>✅ Aucun rattrapage nécessaire');}
   else np.style.display='none';
   showScreen('sDone');
   // EMAIL AUTO
   const emails=[getEmail1(),getEmail2()].filter(e=>e&&e.includes('@'));
   const emailArea=document.getElementById('emailStatusArea');
-  if(!emails.length){emailArea.innerHTML='<div class="email-status-banner error"><span class="es-icon">â ï¸</span><span>Aucun email configurÃ©. Appuie sur âï¸.</span></div>';return;}
-  emailArea.innerHTML='<div class="email-status-banner sending"><span class="es-icon">ð¤</span><span>Envoi des rÃ©sultats en cours...</span></div>';
+  if(!emails.length){emailArea.innerHTML='<div class="email-status-banner error"><span class="es-icon">⚠️</span><span>Aucun email configuré. Appuie sur ⚙️.</span></div>';return;}
+  emailArea.innerHTML='<div class="email-status-banner sending"><span class="es-icon">📤</span><span>Envoi des résultats en cours...</span></div>';
   const strengths=mainAnswers.filter(a=>(a.score||0)>=75).map((_,i)=>mainExs[i]?.skill).filter(Boolean);
   const weaknesses=mainAnswers.filter(a=>(a.score||0)<60).map((_,i)=>mainExs[i]?.skill).filter(Boolean);
-  const params={day_num:'Jour '+S.day+' / 14',topic:plan.topic,score:avg+'/100',duration:fmtTime(S.secs),skills_detail:mainAnswers.map((a,i)=>'â¢ '+(mainExs[i]?.skill||'')+' : '+(a.score||0)+'/100').join('\n')||'â',strengths:strengths.join(', ')||'â',weaknesses:weaknesses.join(', ')||'Aucun â bravo !',remedial_note:nextWeak.length?'â ï¸ Rattrapage prÃ©vu demain : '+nextWeak[0].skill:'â Aucun rattrapage nÃ©cessaire.'};
+  const params={day_num:'Jour '+S.day+' / 14',topic:plan.topic,score:avg+'/100',duration:fmtTime(S.secs),skills_detail:mainAnswers.map((a,i)=>'• '+(mainExs[i]?.skill||'')+' : '+(a.score||0)+'/100').join('\n')||'—',strengths:strengths.join(', ')||'—',weaknesses:weaknesses.join(', ')||'Aucun — bravo !',remedial_note:nextWeak.length?'⚠️ Rattrapage prévu demain : '+nextWeak[0].skill:'✅ Aucun rattrapage nécessaire.'};
   try{
     await Promise.all(emails.map(email=>emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{...params,to_email:email})));
-    emailArea.innerHTML='<div class="email-status-banner sent"><span class="es-icon">â</span><span>RÃ©sultats envoyÃ©s Ã  '+emails.join(' et ')+'</span></div>';
-  }catch(e){emailArea.innerHTML='<div class="email-status-banner error"><span class="es-icon">â</span><span>Erreur d\'envoi email.</span></div>';}
+    emailArea.innerHTML='<div class="email-status-banner sent"><span class="es-icon">✅</span><span>Résultats envoyés à '+emails.join(' et ')+'</span></div>';
+  }catch(e){emailArea.innerHTML='<div class="email-status-banner error"><span class="es-icon">❌</span><span>Erreur d\'envoi email.</span></div>';}
 }
 
-function renderCorr(txt,score){const cls=score>=75?'ok':score>=40?'half':'bad';const icon=score>=75?'â':score>=40?'â ï¸':'â';const lbl=score>=75?'Bien !':score>=40?'Partiellement correct':'Ã retravailler';return '<div class="corr-box '+cls+'"><div class="corr-head"><span>'+icon+'</span><span>'+lbl+' Â· '+score+'/100</span></div><div class="corr-body">'+txt.replace(/\n/g,'<br>')+'</div></div>';}
-function showHint(){alert('ð­ Indice :\n\n'+S.exercises[S.exIdx].hint);}
+function renderCorr(txt,score){const cls=score>=75?'ok':score>=40?'half':'bad';const icon=score>=75?'✅':score>=40?'⚠️':'❌';const lbl=score>=75?'Bien !':score>=40?'Partiellement correct':'À retravailler';return '<div class="corr-box '+cls+'"><div class="corr-head"><span>'+icon+'</span><span>'+lbl+' · '+score+'/100</span></div><div class="corr-body">'+txt.replace(/\n/g,'<br>')+'</div></div>';}
+function showHint(){alert('💭 Indice :\n\n'+S.exercises[S.exIdx].hint);}
 function nextEx(){if(S.exIdx<S.exercises.length-1){S.exIdx++;renderEx();window.scrollTo(0,0);}else endSession();}
 function prevEx(){if(S.exIdx>0){S.exIdx--;renderEx();window.scrollTo(0,0);}}
-function startTimer(){stopTimer();S.secs=0;S.timer=setInterval(()=>{S.secs++;document.getElementById('timerVal').textContent=fmtTime(S.secs);document.getElementById('hTime').textContent='â± '+Math.floor(S.secs/60)+' min';},1000);}
+function startTimer(){stopTimer();S.secs=0;S.timer=setInterval(()=>{S.secs++;document.getElementById('timerVal').textContent=fmtTime(S.secs);document.getElementById('hTime').textContent='⏱ '+Math.floor(S.secs/60)+' min';},1000);}
 function stopTimer(){if(S.timer){clearInterval(S.timer);S.timer=null;}}
 function fmtTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
@@ -575,6 +548,6 @@ initGithubBackup(() => {
 });
 </script>
 
-<div id="exportOverlay" style="position:fixed;inset:0;background:rgba(12,12,20,0.95);z-index:9999;align-items:center;justify-content:center;padding:24px;display:none;"><div style="background:#1c1a2e;border:1.5px solid #6c5ce7;border-radius:20px;padding:32px;max-width:500px;width:100%;text-align:center;"><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:12px;color:#f0eeff;">ð¤ Exporter mes donnÃ©es</div><p style="font-size:13px;color:#8884aa;margin-bottom:16px;line-height:1.6;">Appuie longuement sur le texte ci-dessous<br>â <strong style="color:#f0eeff">Tout sÃ©lectionner</strong> â <strong style="color:#f0eeff">Copier</strong><br>Puis envoie-le Ã  papa/maman.</p><textarea id="exportText" style="width:100%;height:130px;background:#13121e;border:1.5px solid #26233d;border-radius:10px;padding:12px;color:#f0eeff;font-size:10px;font-family:monospace;resize:none;" readonly></textarea><div style="display:flex;gap:10px;margin-top:14px;"><button onclick="copyExportData()" style="flex:1;background:#e8445a;color:white;border:none;padding:14px;border-radius:11px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">ð Copier</button><button onclick="document.getElementById('exportOverlay').classList.remove('show')" style="background:transparent;border:1.5px solid #26233d;color:#8884aa;padding:14px 18px;border-radius:11px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">â</button></div><div id="copyMsg" style="display:none;color:#00b894;font-size:13px;margin-top:12px;font-weight:500;">â CopiÃ© ! Envoie ce texte Ã  tes parents.</div></div></div>
+<div id="exportOverlay"><div style="background:#1c1a2e;border:1.5px solid #6c5ce7;border-radius:20px;padding:32px;max-width:500px;width:100%;text-align:center;"><p style="font-family:Syne,sans-serif;font-weight:800;font-size:20px;margin-bottom:12px;color:#f0eeff;">Exporter mes donnees 📤</p><p style="font-size:13px;color:#8884aa;margin-bottom:16px;line-height:1.6;">Appuie longuement sur le texte, selectionne tout, copie et envoie a papa/maman.</p><textarea id="exportText" style="width:100%;height:120px;background:#13121e;border:1.5px solid #26233d;border-radius:10px;padding:12px;color:#f0eeff;font-size:10px;font-family:monospace;resize:none;" readonly></textarea><div style="display:flex;gap:10px;margin-top:14px;"><button onclick="copyExportData()" style="flex:1;background:#e8445a;color:white;border:none;padding:14px;border-radius:11px;font-weight:700;font-size:14px;cursor:pointer;">Copier 📋</button><button onclick="document.getElementById('exportOverlay').classList.remove('show')" style="background:transparent;border:1.5px solid #26233d;color:#8884aa;padding:14px 18px;border-radius:11px;font-size:14px;cursor:pointer;">Fermer</button></div><div id="copyMsg" style="display:none;color:#00b894;font-size:13px;margin-top:10px;">Copie ! Envoie ce texte a tes parents.</div></div></div>
 </body>
 </html>
