@@ -285,7 +285,7 @@ const EXAMS_STORE   = 'eib_exams_v1';
 function getKey()    { return localStorage.getItem(KEY_STORE)    || ''; }
 function getEmail1() { return localStorage.getItem(EMAIL1_STORE) || ''; }
 function getEmail2() { return localStorage.getItem(EMAIL2_STORE) || ''; }
-function getProg()   { return JSON.parse(localStorage.getItem(PROG_STORE) || '{}'); }
+function getProg()   { try { const v = JSON.parse(localStorage.getItem(PROG_STORE) || '{}'); return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {}; } catch(e) { return {}; } }
 
 function saveKey() {
   const k = document.getElementById('keyInput').value.trim();
@@ -325,7 +325,7 @@ let S = {
 // ANALYSE DES POINTS FAIBLES
 // ══════════════════════════════════════
 function getWeakSkills() {
-  const prog = getProg();
+  const prog = getProg() || {};
   const skillMap = {};
   Object.values(prog).forEach(p => {
     if (p?.skills) {
@@ -335,7 +335,7 @@ function getWeakSkills() {
     }
   });
   // Ajoute aussi les skills faibles des examens précédents
-  exams.forEach(e => {
+  (exams||[]).forEach(e => {
     if (e.weakSkills) e.weakSkills.forEach(s => {
       if (!skillMap[s] || skillMap[s] > 40) skillMap[s] = (skillMap[s] || 50) - 5;
     });
