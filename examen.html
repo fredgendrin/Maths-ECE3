@@ -823,8 +823,9 @@ function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 // DÉMARRAGE
 // ══════════════════════════════════════
 if (!getKey()) {
-  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0c0c14;font-family:sans-serif;text-align:center;padding:24px"><div><div style="font-size:48px;margin-bottom:20px">⚙️</div><h2 style="color:#f0eeff;margin-bottom:12px">Configuration requise</h2><p style="color:#8884aa;margin-bottom:24px">Configure d\'abord l\'application depuis la page Révisions.</p><a href="index.html" style="background:#e8445a;color:white;padding:14px 28px;border-radius:11px;text-decoration:none;font-weight:700">← Retour aux Révisions</a></div></div>';
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0c0c14;font-family:sans-serif;text-align:center;padding:24px"><div><div style="font-size:48px;margin-bottom:20px">⚙️</div><h2 style="color:#f0eeff;margin-bottom:12px">Configuration requise</h2><p style="color:#8884aa;margin-bottom:24px">Configure d\'abord depuis les Révisions.</p><a href="index.html" style="background:#e8445a;color:white;padding:14px 28px;border-radius:11px;text-decoration:none;font-weight:700">← Retour</a></div></div>';
 } else {
+  exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
   initGithubBackup(() => {
     exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
     init();
