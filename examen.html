@@ -268,19 +268,19 @@
 // ══════════════════════════════════════
 // EMAILJS
 // ══════════════════════════════════════
-const EMAILJS_PUBLIC_KEY  = 'ZhyFrCfNfI8NH7w_2';
-const EMAILJS_SERVICE_ID  = 'service_zqdh0oy';
-const EMAILJS_TEMPLATE_ID = 'template_5l1lttw';
+var EMAILJS_PUBLIC_KEY  = 'ZhyFrCfNfI8NH7w_2';
+var EMAILJS_SERVICE_ID  = 'service_zqdh0oy';
+var EMAILJS_TEMPLATE_ID = 'template_5l1lttw';
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
 // ══════════════════════════════════════
 // STORAGE KEYS
 // ══════════════════════════════════════
-const KEY_STORE     = 'eib_api_key';
-const EMAIL1_STORE  = 'eib_email1';
-const EMAIL2_STORE  = 'eib_email2';
-const PROG_STORE    = 'eib_prog_v6';       // partagé avec index.html
-const EXAMS_STORE   = 'eib_exams_v1';
+var KEY_STORE     = 'eib_api_key';
+var EMAIL1_STORE  = 'eib_email1';
+var EMAIL2_STORE  = 'eib_email2';
+var PROG_STORE    = 'eib_prog_v6';       // partagé avec index.html
+var EXAMS_STORE   = 'eib_exams_v1';
 
 function getKey()    { return localStorage.getItem(KEY_STORE)    || ''; }
 function getEmail1() { return localStorage.getItem(EMAIL1_STORE) || ''; }
