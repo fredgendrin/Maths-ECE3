@@ -496,7 +496,7 @@ Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
   const data = await resp.json();
   if (data.error) throw new Error(data.error.message);
   const txt = data.content.map(b => b.text || '').join('').trim();
-  const parsed = JSON.parse(txt);
+  const firstBrace = txt.indexOf('{'); const lastBrace = txt.lastIndexOf('}'); if(firstBrace<0||lastBrace<0)throw new Error('Pas de JSON valide dans la reponse'); const cleanTxt = txt.slice(firstBrace, lastBrace+1); const parsed = JSON.parse(cleanTxt);
   parsed.id = Date.now();
   parsed.number = examNum;
   parsed.weakSkillsTargeted = weakSkills;
