@@ -496,7 +496,7 @@ Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 3000,
       messages: [{ role: 'user', content: prompt }]
     })
@@ -660,7 +660,7 @@ CONSEILS: [2-3 conseils concrets pour progresser]`;
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 2000,
         system: prompt,
         messages: [{
