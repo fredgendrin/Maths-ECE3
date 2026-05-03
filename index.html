@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Révisions Maths ECE3 – EIB Paris</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="sauvegarde.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
   :root{--bg:#0c0c14;--surface:#13121e;--card:#1c1a2e;--accent:#e8445a;--accent2:#6c5ce7;--accent3:#00cec9;--gold:#fdcb6e;--text:#f0eeff;--muted:#8884aa;--border:#26233d;--correct:#00b894;--wrong:#d63031;--warn:#e17055;}
@@ -161,6 +162,10 @@
     <label class="setup-label">Email parent 2</label>
     <input class="setup-input" type="email" id="email2Input" placeholder="email de la maman..." autocomplete="off"/>
     <div class="setup-note" style="margin-top:6px;">Les résultats seront envoyés automatiquement aux deux après chaque session.</div>
+    <hr class="setup-divider">
+    <label class="setup-label">Token GitHub (sauvegarde automatique)</label>
+    <input class="setup-input" type="password" id="ghTokenInput" placeholder="ghp_..." autocomplete="off"/>
+    <div class="setup-note">Sauvegarde automatique des résultats sur GitHub — aucun risque de perte de données.</div>
     <div class="setup-err" id="setupErr"></div>
     <button class="btn btn-cta" style="width:100%;justify-content:center;margin-top:12px;" onclick="saveSetup()">Enregistrer et commencer →</button>
   </div>
@@ -279,6 +284,8 @@ function saveSetup() {
   localStorage.setItem(EMAIL1_STORE, e1);
   if (e2 && e2.includes('@')) localStorage.setItem(EMAIL2_STORE, e2);
   else localStorage.removeItem(EMAIL2_STORE);
+  const ghToken = document.getElementById('ghTokenInput').value.trim();
+  if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
   renderHome();
 }
@@ -494,7 +501,7 @@ async function endSession(){
   const mainExs=S.exercises.filter(e=>!e.isRemedial);
   const scores=mainAnswers.map(a=>a.score).filter(s=>s!==null);
   const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
-  prog[S.day]={...(prog[S.day]||{}),done:true,score:avg,secs:S.secs};saveProg();
+  prog[S.day]={...(prog[S.day]||{}),done:true,score:avg,secs:S.secs};saveProg();githubSaveWithIndicator();
   const icon=avg>=80?'🏆':avg>=55?'⭐':'💪';
   const msg=avg>=80?'Excellent ! Tu maîtrises très bien ce chapitre.':avg>=55?'Bon travail ! Quelques points à consolider.':'C\'était difficile — l\'important est de comprendre la correction !';
   document.getElementById('dIcon').textContent=icon;
@@ -532,7 +539,11 @@ function fmtTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function goHome(){stopTimer();renderHome();showScreen('sHome');}
 
-renderHome();
+initGithubBackup(() => {
+  prog = JSON.parse(localStorage.getItem(PROG_STORE)||'{}');
+  remedialBank = JSON.parse(localStorage.getItem(REMEDIAL_STORE)||'{}');
+  renderHome();
+});
 </script>
 </body>
 </html>
