@@ -211,9 +211,20 @@
       <div class="stat-card"><div class="stat-label">Score moyen</div><div class="stat-val c2" id="sAvg">—</div></div>
       <div class="stat-card"><div class="stat-label">Points faibles</div><div class="stat-val c3" id="sWeak">—</div></div>
     </div>
-    <div class="week-head">Semaine 1 — Calcul &amp; Algèbre</div>
+    <div style="text-align:right;margin-bottom:12px;"><button class="btn btn-ghost" style="font-size:11px;" onclick="showExportData()">📤 Exporter mes données</button></div>
+      <div class="week-head">Semaine 1 — Calcul &amp; Algèbre</div>
     <div class="days-grid" id="wk1"></div>
-    <div class="week-head">Semaine 2 — Géométrie &amp; Synthèse</div>
+    <div id="exportBanner" style="display:none;background:rgba(108,92,231,0.1);border:1.5px solid rgba(108,92,231,0.3);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:8px;">📤 Tes données de progression</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;">Copie tout ce texte et envoie-le pour restaurer ta progression sur un autre appareil.</p>
+        <textarea id="exportText" style="width:100%;min-height:90px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:10px;font-family:monospace;resize:none;" readonly></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-cta" style="flex:1;justify-content:center;font-size:12px;" onclick="copyExportData()">📋 Tout copier</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('exportBanner').style.display='none'">✕</button>
+        </div>
+        <div id="copyMsg" style="font-size:11px;color:var(--correct);margin-top:6px;display:none;">✅ Copié !</div>
+      </div>
+      <div class="week-head">Semaine 2 — Géométrie &amp; Synthèse</div>
     <div class="days-grid" id="wk2"></div>
   </div>
 
@@ -287,7 +298,25 @@ function saveSetup() {
   const ghToken = document.getElementById('ghTokenInput').value.trim();
   if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
-  renderHome();
+  function showExportData() {
+  const keys = ['eib_prog_v6','eib_remedial_v6','eib_exams_v1'];
+  const data = {};
+  keys.forEach(k => { const v = localStorage.getItem(k); if (v) data[k] = v; });
+  if (!Object.keys(data).length) { alert('Aucune donnée trouvée dans ce navigateur.'); return; }
+  document.getElementById('exportText').value = JSON.stringify(data);
+  document.getElementById('exportBanner').style.display = 'block';
+  document.getElementById('exportBanner').scrollIntoView({behavior:'smooth'});
+}
+function copyExportData() {
+  const ta = document.getElementById('exportText');
+  ta.select();
+  try {
+    navigator.clipboard.writeText(ta.value).catch(() => document.execCommand('copy'));
+  } catch(e) { document.execCommand('copy'); }
+  document.getElementById('copyMsg').style.display = 'block';
+  setTimeout(() => document.getElementById('copyMsg').style.display = 'none', 2000);
+}
+renderHome();
 }
 
 function resetSetup() {
