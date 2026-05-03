@@ -489,45 +489,36 @@ async function generateExam(weakSkills, examNum) {
     ? `\nL'élève a déjà passé ${exams.length} examen(s) blanc(s). Dernier score : ${exams[exams.length-1]?.score||'?'}/100.`
     : '\nC\'est le premier examen blanc de l\'élève.';
 
-  const prompt = "Tu es un professeur de mathématiques qui crée un sujet d'examen blanc pour une élève de 4ème (EIB Paris, programme ECE3, SANS calculatrice, durée ~30 minutes).
-
-CONTEXTE :
-- Points à cibler en priorité : " + skillsList + "
-- Format à respecter : exactement comme les annales ECE3 EIB Paris" + previousExamContext + "
-
-CONSIGNES DE RÉDACTION :
-- Crée exactement 4 exercices variés totalisant ~100 points
-- Exercice 1 : QCM (5 questions à choix unique, 5 points chacune = 25 pts)
-- Exercice 2 : Calcul numérique pur (expressions à calculer, 25 pts)
-- Exercice 3 : Calcul littéral / Équations (25 pts)
-- Exercice 4 : Problème de géométrie ou problème concret (25 pts)
-- Les exercices doivent cibler les points faibles : " + skillsList + "
-- Niveau : accessible mais exigeant, format ECE3 authentique
-- SANS calculatrice : tous les calculs doivent être faisables à la main
-
-Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
-{
-  "title": "Examen Blanc n°" + examNum,
-  "focusSkills": ["skill1", "skill2", "skill3"],
-  "totalPoints": 100,
-  "duration": "30 minutes",
-  "exercises": [
-    {
-      "number": 1,
-      "title": "Titre de l'exercice",
-      "points": 25,
-      "skill": "compétence ciblée",
-      "instructions": "Instruction générale si besoin",
-      "questions": [
-        {
-          "num": "1.",
-          "text": "Énoncé de la question (utilise \\n pour les sauts de ligne)",
-          "points": 5
-        }
-      ]
-    }
-  ]
-}";
+  const prompt = [
+    "Tu es un professeur de mathematiques qui cree un sujet d'examen blanc pour une eleve de 4eme (EIB Paris, programme ECE3, SANS calculatrice, duree ~30 minutes).",
+    "",
+    "CONTEXTE :",
+    "- Points a cibler en priorite : " + skillsList,
+    "- Format a respecter : exactement comme les annales ECE3 EIB Paris" + previousExamContext,
+    "",
+    "CONSIGNES DE REDACTION :",
+    "- Cree exactement 4 exercices varies totalisant ~100 points",
+    "- Exercice 1 : QCM (5 questions a choix unique, 5 points chacune = 25 pts)",
+    "- Exercice 2 : Calcul numerique pur (expressions a calculer, 25 pts)",
+    "- Exercice 3 : Calcul litteral / Equations (25 pts)",
+    "- Exercice 4 : Probleme de geometrie ou probleme concret (25 pts)",
+    "- Les exercices doivent cibler les points faibles : " + skillsList,
+    "- Niveau : accessible mais exigeant, format ECE3 authentique",
+    "- SANS calculatrice : tous les calculs doivent etre faisables a la main",
+    "",
+    "Reponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :",
+    JSON.stringify({
+      title: "Examen Blanc n°" + examNum,
+      focusSkills: ["skill1", "skill2", "skill3"],
+      totalPoints: 100,
+      duration: "30 minutes",
+      exercises: [{
+        number: 1, title: "Titre", points: 25, skill: "competence",
+        instructions: "Instruction",
+        questions: [{ num: "1.", text: "Enonce", points: 5 }]
+      }]
+    })
+  ].join("\n");
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
