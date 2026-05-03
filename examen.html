@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Examens Blancs ECE3 – EIB Paris</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="sauvegarde.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
   :root{--bg:#0c0c14;--surface:#13121e;--card:#1c1a2e;--accent:#e8445a;--accent2:#6c5ce7;--accent3:#00cec9;--gold:#fdcb6e;--text:#f0eeff;--muted:#8884aa;--border:#26233d;--correct:#00b894;--wrong:#d63031;--warn:#e17055;}
@@ -174,6 +175,9 @@
     <p>Saisis ta clé API Anthropic pour générer et corriger les examens.</p>
     <input class="setup-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
     <div class="setup-err" id="setupErr">❌ La clé doit commencer par sk-ant-</div>
+    <label style="font-size:11px;color:var(--muted);text-align:left;display:block;margin-bottom:4px;margin-top:10px;text-transform:uppercase;">Token GitHub (optionnel)</label>
+    <input class="setup-input" type="password" id="ghTokenInput" placeholder="ghp_..." autocomplete="off"/>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;text-align:left;">Pour sauvegarder les résultats d'examens.</div>
     <button class="btn btn-cta" style="width:100%;justify-content:center;" onclick="saveKey()">Continuer →</button>
   </div>
 </div>
@@ -300,6 +304,8 @@ function saveKey() {
   const k = document.getElementById('keyInput').value.trim();
   if (!k.startsWith('sk-ant-')) { document.getElementById('setupErr').style.display = 'block'; return; }
   localStorage.setItem(KEY_STORE, k);
+  const ghToken = document.getElementById('ghTokenInput').value.trim();
+  if (ghToken) localStorage.setItem('eib_github_token', ghToken);
   document.getElementById('setupWrap').style.display = 'none';
   init();
 }
@@ -716,6 +722,7 @@ CONSEILS: [2-3 conseils concrets pour progresser]`;
     };
     exams.push(examRecord);
     saveExams();
+    githubSaveWithIndicator();
 
     // Affiche la correction
     const scoreCls = score>=80?'great':score>=60?'good':score>=40?'avg':'low';
@@ -823,7 +830,12 @@ function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 // ══════════════════════════════════════
 // DÉMARRAGE
 // ══════════════════════════════════════
-if (getKey()) init();
+if (getKey()) {
+  initGithubBackup(() => {
+    exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
+    init();
+  });
+}
 </script>
 </body>
 </html>
