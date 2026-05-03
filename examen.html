@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examens Blancs ECE3 – EIB Paris</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+  :root{--bg:#0c0c14;--surface:#13121e;--card:#1c1a2e;--accent:#e8445a;--accent2:#6c5ce7;--accent3:#00cec9;--gold:#fdcb6e;--text:#f0eeff;--muted:#8884aa;--border:#26233d;--correct:#00b894;--wrong:#d63031;--warn:#e17055;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,92,231,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,92,231,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  h1,h2,h3,h4{font-family:'Syne',sans-serif;}
+
+  /* SETUP */
+  .setup-wrap{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .setup-box{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:40px;max-width:440px;width:100%;text-align:center;}
+  .setup-icon{font-size:48px;margin-bottom:16px;}
+  .setup-box h2{font-size:22px;font-weight:800;margin-bottom:10px;}
+  .setup-box p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px;}
+  .setup-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;margin-bottom:10px;}
+  .setup-input::placeholder{color:var(--muted);opacity:0.5;}
+  .setup-err{color:var(--wrong);font-size:12px;margin-bottom:10px;display:none;}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:200;background:rgba(12,12,20,0.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,var(--accent));display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .logo h1{font-size:16px;font-weight:800;letter-spacing:-0.3px;line-height:1.1;}
+  .logo small{display:block;font-size:10px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;}
+  .hbadges{display:flex;gap:8px;}
+  .hb{font-size:11px;font-weight:500;background:var(--card);border:1px solid var(--border);padding:5px 12px;border-radius:100px;color:var(--muted);}
+  .hb.hi{border-color:var(--gold);color:var(--gold);background:rgba(253,203,110,0.1);}
+  .hb.back{cursor:pointer;}.hb.back:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:32px 20px 100px;}
+  .screen{display:none;}.screen.active{display:block;}
+
+  /* BUTTONS */
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:11px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;border:none;transition:all 0.18s;}
+  .btn-cta{background:var(--accent);color:#fff;}.btn-cta:hover{background:#cc3049;transform:translateY(-1px);}
+  .btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;}.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,158,11,0.3);}
+  .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text);}.btn-outline:hover{border-color:var(--accent2);}
+  .btn-ghost{background:transparent;color:var(--muted);padding:10px 14px;font-size:13px;}.btn-ghost:hover{color:var(--text);}
+
+  /* HOME */
+  .home-hero{text-align:center;padding:44px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:18px;}
+  .home-hero h2{font-size:clamp(28px,4.5vw,46px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px;}
+  .home-hero h2 em{font-style:normal;color:var(--gold);}
+  .home-hero p{color:var(--muted);font-size:15px;max-width:480px;margin:0 auto 28px;line-height:1.65;}
+
+  /* WEAK SKILLS BANNER */
+  .weak-banner{background:linear-gradient(120deg,rgba(225,112,85,0.1),rgba(253,203,110,0.07));border:1.5px solid rgba(225,112,85,0.3);border-radius:14px;padding:18px 22px;margin-bottom:28px;}
+  .weak-banner-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .weak-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .weak-chip{font-size:12px;padding:4px 12px;border-radius:100px;border:1px solid rgba(225,112,85,0.4);background:rgba(225,112,85,0.08);color:#fca5a5;}
+  .weak-chip.ok{border-color:rgba(6,214,160,0.4);background:rgba(6,214,160,0.08);color:#6ee7b7;}
+
+  /* EXAM HISTORY */
+  .section-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+  .exam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:32px;}
+  .exam-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;}
+  .exam-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--border);}
+  .exam-card.done::before{background:var(--correct);}
+  .exam-num{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+  .exam-score{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--gold);}
+  .exam-score small{font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;}
+  .exam-focus{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4;}
+  .exam-date{position:absolute;top:12px;right:12px;font-size:10px;color:var(--muted);}
+
+  /* GENERATING */
+  .gen-screen{text-align:center;padding:60px 20px;}
+  .gen-icon{font-size:56px;margin-bottom:20px;animation:pulse 1.5s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+  .gen-title{font-size:24px;font-weight:800;margin-bottom:10px;letter-spacing:-0.5px;}
+  .gen-sub{color:var(--muted);font-size:15px;margin-bottom:32px;line-height:1.6;}
+  .gen-steps{display:flex;flex-direction:column;gap:10px;max-width:360px;margin:0 auto;}
+  .gen-step{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:10px;transition:all 0.3s;}
+  .gen-step.active{border-color:var(--accent2);color:#a29bfe;}
+  .gen-step.done{border-color:var(--correct);color:var(--correct);}
+  .gen-step .step-icon{font-size:18px;flex-shrink:0;}
+
+  /* EXAM SCREEN */
+  .exam-header{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:24px;}
+  .exam-header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .exam-title-block h2{font-size:20px;font-weight:800;margin-bottom:4px;}
+  .exam-title-block p{font-size:13px;color:var(--muted);}
+  .exam-timer-big{text-align:right;}
+  .exam-timer-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  .exam-timer-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent3);}
+  .exam-timer-val.warn{color:var(--warn);}
+  .exam-timer-val.danger{color:var(--wrong);}
+  .exam-meta-chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .meta-chip{font-size:11px;padding:4px 12px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--muted);}
+  .meta-chip.focus{border-color:rgba(245,158,11,0.4);color:var(--gold);background:rgba(245,158,11,0.08);}
+
+  /* EXERCISE CARDS */
+  .ex-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px 26px;margin-bottom:16px;}
+  .ex-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .ex-num-badge{background:rgba(232,68,90,0.12);border:1px solid rgba(232,68,90,0.25);color:var(--accent);font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;}
+  .ex-points{font-size:11px;color:var(--gold);font-weight:600;}
+  .ex-skill-tag{font-size:11px;color:var(--muted);}
+  .ex-text{font-size:15px;line-height:1.8;white-space:pre-wrap;font-weight:300;}
+
+  /* UPLOAD ZONE */
+  .upload-section{margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+  .upload-label{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+  .photo-zone{border:2px dashed var(--border);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
+  .photo-zone:hover,.photo-zone.dragover{border-color:var(--accent2);background:rgba(108,92,231,0.05);}
+  .photo-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .photo-zone-icon{font-size:32px;margin-bottom:8px;}
+  .photo-zone-text{font-size:13px;color:var(--muted);line-height:1.5;}
+  .photo-zone-text strong{color:var(--text);display:block;margin-bottom:3px;}
+  .photo-preview-wrap{margin-top:12px;text-align:center;}
+  .photo-preview-wrap img{max-width:100%;max-height:260px;border-radius:10px;border:1.5px solid var(--border);}
+  .photo-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end;}
+  .photo-remove-btn{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .photo-remove-btn:hover{border-color:var(--wrong);color:var(--wrong);}
+
+  /* SUBMIT BAR */
+  .submit-bar{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:18px 22px;margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .submit-bar-info{font-size:13px;color:var(--muted);}
+  .submit-bar-info strong{color:var(--text);}
+
+  /* CORRECTION */
+  .correction-wrap{margin-top:24px;}
+  .correction-loading{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:24px;text-align:center;}
+  .correction-loading p{color:var(--muted);font-size:14px;margin-top:12px;}
+  .ld{display:flex;gap:5px;align-items:center;justify-content:center;padding:4px 0;}
+  .ld span{width:8px;height:8px;border-radius:50%;animation:boing 1.1s ease-in-out infinite;}
+  .ld span:nth-child(1){background:var(--accent);}.ld span:nth-child(2){background:var(--accent2);animation-delay:.18s;}.ld span:nth-child(3){background:var(--accent3);animation-delay:.36s;}
+  @keyframes boing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+
+  .correction-result{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-top:0;}
+  .correction-result.great{border-color:var(--correct);}
+  .correction-result.good{border-color:var(--accent3);}
+  .correction-result.avg{border-color:var(--warn);}
+  .correction-result.low{border-color:var(--wrong);}
+
+  .score-big{text-align:center;padding:20px 0 16px;}
+  .score-big .score-num{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;line-height:1;}
+  .score-big .score-num.great{color:var(--correct);}
+  .score-big .score-num.good{color:var(--accent3);}
+  .score-big .score-num.avg{color:var(--warn);}
+  .score-big .score-num.low{color:var(--wrong);}
+  .score-big .score-label{font-size:13px;color:var(--muted);margin-top:4px;}
+
+  .corr-divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+  .corr-section-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:10px;}
+  .corr-text{font-size:14px;line-height:1.75;white-space:pre-wrap;color:var(--text);opacity:0.9;}
+
+  .next-exam-banner{background:linear-gradient(120deg,rgba(108,92,231,0.1),rgba(0,206,201,0.07));border:1.5px solid rgba(108,92,231,0.3);border-radius:14px;padding:16px 20px;margin-top:16px;font-size:13px;color:#b8b0f0;display:flex;align-items:center;gap:12px;}
+  .next-exam-banner .nei{font-size:20px;flex-shrink:0;}
+
+  .email-status{border-radius:12px;padding:12px 16px;margin-top:12px;font-size:12px;display:flex;align-items:center;gap:8px;border:1px solid;}
+  .email-status.sending{background:rgba(108,92,231,0.08);border-color:rgba(108,92,231,0.3);color:#a29bfe;}
+  .email-status.sent{background:rgba(0,184,148,0.08);border-color:var(--correct);color:var(--correct);}
+  .email-status.error{background:rgba(214,48,49,0.08);border-color:var(--wrong);color:#fca5a5;}
+
+  .done-actions{display:flex;gap:10px;margin-top:20px;justify-content:center;flex-wrap:wrap;}
+
+  @media(max-width:600px){header{padding:12px 16px;}main{padding:20px 14px 80px;}.hbadges{display:none;}.exam-header-top{flex-direction:column;gap:12px;}.exam-timer-big{text-align:left;}.submit-bar{flex-direction:column;align-items:stretch;}.submit-bar .btn{justify-content:center;}}
+</style>
+</head>
+<body>
+
+<div class="setup-wrap" id="setupWrap">
+  <div class="setup-box">
+    <div class="setup-icon">🔑</div>
+    <h2>Configuration requise</h2>
+    <p>Saisis ta clé API Anthropic pour générer et corriger les examens.</p>
+    <input class="setup-input" type="password" id="keyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    <div class="setup-err" id="setupErr">❌ La clé doit commencer par sk-ant-</div>
+    <button class="btn btn-cta" style="width:100%;justify-content:center;" onclick="saveKey()">Continuer →</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">📝</div>
+    <h1>Examens Blancs<small>ECE3 · EIB Paris · Adaptatif</small></h1>
+  </div>
+  <div class="hbadges">
+    <span class="hb hi" id="hExamCount">0 examen(s)</span>
+    <span class="hb" id="hAvgScore">Moyenne —</span>
+    <span class="hb back" onclick="window.location.href='index.html'">← Révisions</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <div id="sHome" class="screen active">
+    <div class="home-hero">
+      <div class="eyebrow">📝 Examens blancs · ~30 minutes · Adaptatif</div>
+      <h2>Entraîne-toi en <em>conditions réelles</em></h2>
+      <p>Chaque examen est généré par l'IA en fonction de tes points faibles. Résous-le sur papier, envoie une photo, et obtiens une correction détaillée.</p>
+      <button class="btn btn-gold" id="btnStartExam" onclick="startNewExam()">✦ Générer mon prochain examen</button>
+    </div>
+
+    <div id="weakBannerArea"></div>
+
+    <div class="section-title">Historique des examens</div>
+    <div class="exam-grid" id="examGrid">
+      <div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px 0;">Aucun examen passé pour l'instant. Lance ton premier !</div>
+    </div>
+  </div>
+
+  <!-- GENERATING -->
+  <div id="sGenerating" class="screen">
+    <div class="gen-screen">
+      <div class="gen-icon">🤖</div>
+      <div class="gen-title">Génération de ton examen…</div>
+      <div class="gen-sub">L'IA prépare un sujet de 30 minutes<br>adapté à tes points à retravailler.</div>
+      <div class="gen-steps">
+        <div class="gen-step active" id="step1"><span class="step-icon">🔍</span>Analyse de tes résultats précédents</div>
+        <div class="gen-step" id="step2"><span class="step-icon">📐</span>Sélection des chapitres ciblés</div>
+        <div class="gen-step" id="step3"><span class="step-icon">✍️</span>Rédaction des exercices</div>
+        <div class="gen-step" id="step4"><span class="step-icon">✅</span>Vérification et mise en forme</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAM -->
+  <div id="sExam" class="screen">
+    <div class="exam-header">
+      <div class="exam-header-top">
+        <div class="exam-title-block">
+          <h2 id="examTitle">Examen Blanc n°1</h2>
+          <p id="examSubtitle">Chapitres ciblés : —</p>
+        </div>
+        <div class="exam-timer-big">
+          <div class="exam-timer-label">Temps écoulé</div>
+          <div class="exam-timer-val" id="examTimerVal">00:00</div>
+        </div>
+      </div>
+      <div class="exam-meta-chips" id="examMetaChips"></div>
+    </div>
+
+    <div id="examExercises"></div>
+
+    <div class="upload-section">
+      <div class="upload-label">📷 Upload ta copie pour la correction</div>
+      <div class="photo-zone" id="photoZone"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(event)">
+        <input type="file" accept="image/*" capture="environment" onchange="handleFile(this.files[0])">
+        <div class="photo-zone-icon">📷</div>
+        <div class="photo-zone-text">
+          <strong>Prends une photo de toute ta copie</strong>
+          Sur téléphone : appuie pour ouvrir l'appareil photo<br>
+          Sur ordi : clique pour choisir un fichier image
+        </div>
+      </div>
+      <div id="photoPreviewArea"></div>
+    </div>
+
+    <div class="submit-bar">
+      <div class="submit-bar-info">
+        <strong>Prêt(e) ?</strong> Upload ta copie puis lance la correction IA.
+      </div>
+      <button class="btn btn-cta" id="btnCorrect" onclick="submitExam()">
+        Corriger ma copie ✦
+      </button>
+    </div>
+
+    <div id="correctionWrap"></div>
+  </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════
+// EMAILJS
+// ══════════════════════════════════════
+const EMAILJS_PUBLIC_KEY  = 'ZhyFrCfNfI8NH7w_2';
+const EMAILJS_SERVICE_ID  = 'service_zqdh0oy';
+const EMAILJS_TEMPLATE_ID = 'template_5l1lttw';
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+// ══════════════════════════════════════
+// STORAGE KEYS
+// ══════════════════════════════════════
+const KEY_STORE     = 'eib_api_key';
+const EMAIL1_STORE  = 'eib_email1';
+const EMAIL2_STORE  = 'eib_email2';
+const PROG_STORE    = 'eib_prog_v6';       // partagé avec index.html
+const EXAMS_STORE   = 'eib_exams_v1';
+
+function getKey()    { return localStorage.getItem(KEY_STORE)    || ''; }
+function getEmail1() { return localStorage.getItem(EMAIL1_STORE) || ''; }
+function getEmail2() { return localStorage.getItem(EMAIL2_STORE) || ''; }
+function getProg()   { return JSON.parse(localStorage.getItem(PROG_STORE) || '{}'); }
+
+function saveKey() {
+  const k = document.getElementById('keyInput').value.trim();
+  if (!k.startsWith('sk-ant-')) { document.getElementById('setupErr').style.display = 'block'; return; }
+  localStorage.setItem(KEY_STORE, k);
+  document.getElementById('setupWrap').style.display = 'none';
+  init();
+}
+if (getKey()) document.getElementById('setupWrap').style.display = 'none';
+document.getElementById('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
+
+// ══════════════════════════════════════
+// EXAMS STORE
+// ══════════════════════════════════════
+let exams = JSON.parse(localStorage.getItem(EXAMS_STORE) || '[]');
+const saveExams = () => localStorage.setItem(EXAMS_STORE, JSON.stringify(exams));
+
+// ══════════════════════════════════════
+// SESSION STATE
+// ══════════════════════════════════════
+let S = {
+  currentExam: null,   // { id, number, title, exercises, focusSkills, generated }
+  photoB64: null,
+  photoMime: null,
+  timerInterval: null,
+  secs: 0
+};
+
+// ══════════════════════════════════════
+// ANALYSE DES POINTS FAIBLES
+// ══════════════════════════════════════
+function getWeakSkills() {
+  const prog = getProg();
+  const skillMap = {};
+  Object.values(prog).forEach(p => {
+    if (p?.skills) {
+      Object.entries(p.skills).forEach(([skill, score]) => {
+        if (!skillMap[skill] || score < skillMap[skill]) skillMap[skill] = score;
+      });
+    }
+  });
+  // Ajoute aussi les skills faibles des examens précédents
+  exams.forEach(e => {
+    if (e.weakSkills) e.weakSkills.forEach(s => {
+      if (!skillMap[s] || skillMap[s] > 40) skillMap[s] = (skillMap[s] || 50) - 5;
+    });
+  });
+  return Object.entries(skillMap)
+    .map(([skill, score]) => ({ skill, score }))
+    .sort((a, b) => a.score - b.score);
+}
+
+function getTopWeakSkills(n = 4) {
+  return getWeakSkills().slice(0, n).map(w => w.skill);
+}
+
+// ══════════════════════════════════════
+// INIT HOME
+// ══════════════════════════════════════
+function init() {
+  renderWeakBanner();
+  renderExamHistory();
+  updateHeader();
+}
+
+function updateHeader() {
+  const done = exams.filter(e => e.score != null);
+  const avg = done.length ? Math.round(done.reduce((a, e) => a + e.score, 0) / done.length) : null;
+  document.getElementById('hExamCount').textContent = exams.length + ' examen' + (exams.length > 1 ? 's' : '');
+  document.getElementById('hAvgScore').textContent = avg ? 'Moyenne ' + avg + '/100' : 'Moyenne —';
+}
+
+function renderWeakBanner() {
+  const weak = getWeakSkills();
+  const area = document.getElementById('weakBannerArea');
+  if (!weak.length) {
+    area.innerHTML = '<div class="weak-banner"><div class="weak-banner-title">✅ Aucun point faible détecté</div><p style="font-size:13px;color:var(--muted)">Lance le premier examen pour identifier tes axes de progression !</p></div>';
+    return;
+  }
+  const strong = weak.filter(w => w.score >= 70);
+  const toWork = weak.filter(w => w.score < 70);
+  area.innerHTML = `
+    <div class="weak-banner">
+      <div class="weak-banner-title">🎯 Points ciblés par le prochain examen</div>
+      <div class="weak-chips">
+        ${toWork.slice(0,5).map(w=>'<span class="weak-chip">⚠️ '+w.skill+' ('+w.score+'/100)</span>').join('')}
+        ${strong.slice(0,2).map(w=>'<span class="weak-chip ok">✅ '+w.skill+'</span>').join('')}
+      </div>
+    </div>`;
+}
+
+function renderExamHistory() {
+  const grid = document.getElementById('examGrid');
+  if (!exams.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px 0;">Aucun examen passé pour l\'instant. Lance ton premier !</div>';
+    return;
+  }
+  grid.innerHTML = [...exams].reverse().map(e => {
+    const cls = e.score >= 80 ? 'great' : e.score >= 60 ? 'good' : e.score >= 40 ? 'avg' : 'low';
+    const icon = e.score >= 80 ? '🏆' : e.score >= 60 ? '⭐' : e.score >= 40 ? '📈' : '💪';
+    return `<div class="exam-card done">
+      <div class="exam-num">Examen n°${e.number}</div>
+      <div class="exam-score">${icon} ${e.score != null ? e.score+'/100' : '—'} <small>${e.duration||''}</small></div>
+      <div class="exam-focus">Chapitres : ${(e.focusSkills||[]).slice(0,2).join(', ')}</div>
+      <div class="exam-date">${e.date||''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// GÉNÉRER UN EXAMEN
+// ══════════════════════════════════════
+async function startNewExam() {
+  showScreen('sGenerating');
+  const weakSkills = getTopWeakSkills(4);
+  const examNum = exams.length + 1;
+
+  // Anime les étapes
+  const steps = ['step1','step2','step3','step4'];
+  for (let i = 0; i < steps.length; i++) {
+    await delay(900);
+    document.getElementById(steps[i]).classList.remove('active');
+    document.getElementById(steps[i]).classList.add('done');
+    if (i + 1 < steps.length) document.getElementById(steps[i+1]).classList.add('active');
+  }
+
+  try {
+    const exam = await generateExam(weakSkills, examNum);
+    S.currentExam = exam;
+    S.photoB64 = null;
+    S.photoMime = null;
+    renderExam(exam);
+    showScreen('sExam');
+    startExamTimer();
+  } catch(e) {
+    showScreen('sHome');
+    alert('Erreur lors de la génération : ' + e.message + '\nVérifie ta connexion et ta clé API.');
+  }
+}
+
+async function generateExam(weakSkills, examNum) {
+  const prog = getProg();
+  const hasHistory = Object.keys(prog).length > 0;
+
+  const skillsList = weakSkills.length > 0
+    ? weakSkills.join(', ')
+    : 'Calcul littéral, Fractions, Pythagore, Équations';
+
+  const previousExamContext = exams.length > 0
+    ? `\nL'élève a déjà passé ${exams.length} examen(s) blanc(s). Dernier score : ${exams[exams.length-1]?.score||'?'}/100.`
+    : '\nC\'est le premier examen blanc de l\'élève.';
+
+  const prompt = `Tu es un professeur de mathématiques qui crée un sujet d'examen blanc pour une élève de 4ème (EIB Paris, programme ECE3, SANS calculatrice, durée ~30 minutes).
+
+CONTEXTE :
+- Points à cibler en priorité : ${skillsList}
+- Format à respecter : exactement comme les annales ECE3 EIB Paris${previousExamContext}
+
+CONSIGNES DE RÉDACTION :
+- Crée exactement 4 exercices variés totalisant ~100 points
+- Exercice 1 : QCM (5 questions à choix unique, 5 points chacune = 25 pts)
+- Exercice 2 : Calcul numérique pur (expressions à calculer, 25 pts)
+- Exercice 3 : Calcul littéral / Équations (25 pts)
+- Exercice 4 : Problème de géométrie ou problème concret (25 pts)
+- Les exercices doivent cibler les points faibles : ${skillsList}
+- Niveau : accessible mais exigeant, format ECE3 authentique
+- SANS calculatrice : tous les calculs doivent être faisables à la main
+
+Réponds UNIQUEMENT en JSON valide, pas de markdown, pas de commentaires :
+{
+  "title": "Examen Blanc n°${examNum}",
+  "focusSkills": ["skill1", "skill2", "skill3"],
+  "totalPoints": 100,
+  "duration": "30 minutes",
+  "exercises": [
+    {
+      "number": 1,
+      "title": "Titre de l'exercice",
+      "points": 25,
+      "skill": "compétence ciblée",
+      "instructions": "Instruction générale si besoin",
+      "questions": [
+        {
+          "num": "1.",
+          "text": "Énoncé de la question (utilise \\n pour les sauts de ligne)",
+          "points": 5
+        }
+      ]
+    }
+  ]
+}`;
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': getKey(),
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 3000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error.message);
+  const txt = data.content.map(b => b.text || '').join('').trim();
+  const parsed = JSON.parse(txt);
+  parsed.id = Date.now();
+  parsed.number = examNum;
+  parsed.weakSkillsTargeted = weakSkills;
+  parsed.generated = new Date().toLocaleDateString('fr-FR');
+  return parsed;
+}
+
+// ══════════════════════════════════════
+// AFFICHER L'EXAMEN
+// ══════════════════════════════════════
+function renderExam(exam) {
+  document.getElementById('examTitle').textContent = exam.title || 'Examen Blanc n°' + exam.number;
+  document.getElementById('examSubtitle').textContent = 'Chapitres ciblés : ' + (exam.focusSkills || []).join(', ');
+
+  // Meta chips
+  document.getElementById('examMetaChips').innerHTML =
+    `<span class="meta-chip">⏱ ~30 minutes</span>
+     <span class="meta-chip">🚫 Sans calculatrice</span>
+     <span class="meta-chip">📊 ${exam.totalPoints || 100} points</span>
+     ${(exam.focusSkills||[]).map(s=>'<span class="meta-chip focus">🎯 '+s+'</span>').join('')}`;
+
+  // Exercises
+  const container = document.getElementById('examExercises');
+  container.innerHTML = (exam.exercises || []).map(ex => `
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <span class="ex-num-badge">Exercice ${ex.number}</span>
+        <span class="ex-points">${ex.points} pts</span>
+        <span class="ex-skill-tag">· ${ex.skill || ''}</span>
+      </div>
+      <div class="ex-text"><strong>${ex.title || ''}</strong>${ex.instructions ? '\n'+ex.instructions : ''}</div>
+      ${(ex.questions||[]).map(q=>`
+        <div style="margin-top:14px;padding:14px 16px;background:var(--card);border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--gold);margin-bottom:6px;font-weight:600;">${q.num} — ${q.points} pt${q.points>1?'s':''}</div>
+          <div class="ex-text" style="font-size:14px;">${(q.text||'').replace(/\n/g,'<br>')}</div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  // Reset photo
+  document.getElementById('photoPreviewArea').innerHTML = '';
+  document.getElementById('correctionWrap').innerHTML = '';
+  document.getElementById('btnCorrect').disabled = false;
+}
+
+// ══════════════════════════════════════
+// TIMER EXAMEN
+// ══════════════════════════════════════
+function startExamTimer() {
+  stopExamTimer();
+  S.secs = 0;
+  S.timerInterval = setInterval(() => {
+    S.secs++;
+    const tv = document.getElementById('examTimerVal');
+    tv.textContent = fmtTime(S.secs);
+    // Warning colors
+    if (S.secs > 35*60) tv.className = 'exam-timer-val danger';
+    else if (S.secs > 25*60) tv.className = 'exam-timer-val warn';
+    else tv.className = 'exam-timer-val';
+  }, 1000);
+}
+function stopExamTimer() {
+  if (S.timerInterval) { clearInterval(S.timerInterval); S.timerInterval = null; }
+}
+
+// ══════════════════════════════════════
+// GESTION PHOTO
+// ══════════════════════════════════════
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    S.photoB64  = e.target.result.split(',')[1];
+    S.photoMime = file.type;
+    document.getElementById('photoPreviewArea').innerHTML = `
+      <div class="photo-preview-wrap">
+        <img src="data:${file.type};base64,${S.photoB64}" alt="Ta copie"/>
+        <div class="photo-actions">
+          <button class="photo-remove-btn" onclick="removePhoto()">✕ Supprimer</button>
+        </div>
+      </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('photoZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+function removePhoto() {
+  S.photoB64 = null; S.photoMime = null;
+  document.getElementById('photoPreviewArea').innerHTML = '';
+}
+
+// ══════════════════════════════════════
+// SOUMETTRE L'EXAMEN POUR CORRECTION
+// ══════════════════════════════════════
+async function submitExam() {
+  if (!S.photoB64) {
+    alert('📷 Prends d\'abord une photo de ta copie !');
+    return;
+  }
+  stopExamTimer();
+  const duration = fmtTime(S.secs);
+
+  document.getElementById('btnCorrect').disabled = true;
+  document.getElementById('correctionWrap').innerHTML = `
+    <div class="correction-loading">
+      <div class="ld"><span></span><span></span><span></span></div>
+      <p>L'IA analyse ta copie manuscrite...<br>Cela peut prendre 15 à 30 secondes.</p>
+    </div>`;
+
+  const exam = S.currentExam;
+  const exercisesText = (exam.exercises||[]).map(ex =>
+    `Exercice ${ex.number} (${ex.points} pts) — ${ex.title}\n` +
+    (ex.questions||[]).map(q => `  ${q.num} (${q.points}pts) : ${q.text}`).join('\n')
+  ).join('\n\n');
+
+  const prompt = `Tu es un professeur de mathématiques bienveillant et rigoureux qui corrige un examen blanc ECE3 EIB Paris d'une élève de 4ème (SANS calculatrice).
+
+SUJET DE L'EXAMEN :
+${exam.title} — Durée ~30 min — Total : ${exam.totalPoints||100} points
+Chapitres ciblés : ${(exam.focusSkills||[]).join(', ')}
+
+${exercisesText}
+
+CONSIGNES DE CORRECTION :
+1. Lis attentivement la copie manuscrite de l'élève
+2. Pour chaque exercice et question, indique :
+   - Les points obtenus / points possibles
+   - Si la démarche est bonne même si la réponse est fausse
+   - L'erreur précise si présente
+3. Donne un commentaire général encourageant
+4. Identifie les 2-3 points les plus importants à retravailler
+5. Donne des conseils méthodologiques pour l'ECE3
+
+FORMAT DE RÉPONSE :
+Commence par : NOTE GLOBALE: [X]/100
+Puis structure ta correction exercice par exercice.
+Termine par :
+POINTS_FORTS: [liste des compétences bien maîtrisées]
+POINTS_FAIBLES: [liste des compétences à retravailler]
+CONSEILS: [2-3 conseils concrets pour progresser]`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: prompt,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: S.photoMime, data: S.photoB64 } },
+            { type: 'text', text: 'Voici ma copie manuscrite. Corrige-la selon le sujet.' }
+          ]
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    const corrText = data.content.map(b => b.text || '').join('');
+
+    // Parse score
+    const scoreMatch = corrText.match(/NOTE GLOBALE:\s*(\d+)\s*\/\s*100/i);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 50;
+
+    // Parse weak skills
+    const weakMatch = corrText.match(/POINTS_FAIBLES:\s*([^\n]+)/i);
+    const weakSkills = weakMatch ? weakMatch[1].split(',').map(s=>s.trim()).filter(Boolean) : [];
+
+    // Parse strong skills
+    const strongMatch = corrText.match(/POINTS_FORTS:\s*([^\n]+)/i);
+    const strongSkills = strongMatch ? strongMatch[1].split(',').map(s=>s.trim()).filter(Boolean) : [];
+
+    // Parse conseils
+    const conseilsMatch = corrText.match(/CONSEILS:\s*([\s\S]+)$/i);
+    const conseils = conseilsMatch ? conseilsMatch[1].trim() : '';
+
+    // Texte de correction sans les markers
+    const corrBody = corrText
+      .replace(/NOTE GLOBALE:[^\n]*/i, '')
+      .replace(/POINTS_FORTS:[^\n]*/i, '')
+      .replace(/POINTS_FAIBLES:[^\n]*/i, '')
+      .replace(/CONSEILS:[\s\S]*/i, '')
+      .trim();
+
+    // Sauvegarde l'examen
+    const examRecord = {
+      id: exam.id,
+      number: exam.number,
+      title: exam.title,
+      focusSkills: exam.focusSkills || [],
+      score,
+      weakSkills,
+      strongSkills,
+      duration,
+      date: new Date().toLocaleDateString('fr-FR'),
+      correctionSummary: corrBody.slice(0, 300)
+    };
+    exams.push(examRecord);
+    saveExams();
+
+    // Affiche la correction
+    const scoreCls = score>=80?'great':score>=60?'good':score>=40?'avg':'low';
+    const scoreIcon = score>=80?'🏆':score>=60?'⭐':score>=40?'📈':'💪';
+    const scoreMsg = score>=80?'Excellent travail !':score>=60?'Bon travail !':score>=40?'En progression !':'Courage, tu y arriveras !';
+
+    const nextWeak = weakSkills.length ? weakSkills : getTopWeakSkills(3);
+
+    document.getElementById('correctionWrap').innerHTML = `
+      <div class="correction-result ${scoreCls}">
+        <div class="score-big">
+          <div class="score-num ${scoreCls}">${scoreIcon} ${score}/100</div>
+          <div class="score-label">${scoreMsg} · Durée : ${duration}</div>
+        </div>
+        <hr class="corr-divider">
+        <div class="corr-section-title">Correction détaillée</div>
+        <div class="corr-text">${corrBody.replace(/\n/g,'<br>')}</div>
+        ${conseils ? `<hr class="corr-divider"><div class="corr-section-title">Conseils pour progresser</div><div class="corr-text">${conseils.replace(/\n/g,'<br>')}</div>` : ''}
+        <hr class="corr-divider">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          ${strongSkills.length ? `<div style="flex:1;min-width:200px;"><div class="corr-section-title">✅ Points forts</div><div style="font-size:13px;color:var(--correct);">${strongSkills.join('<br>')}</div></div>` : ''}
+          ${weakSkills.length ? `<div style="flex:1;min-width:200px;"><div class="corr-section-title">⚠️ À retravailler</div><div style="font-size:13px;color:var(--warn);">${weakSkills.join('<br>')}</div></div>` : ''}
+        </div>
+        <div class="next-exam-banner">
+          <span class="nei">🎯</span>
+          <span>Le prochain examen ciblera : <strong>${nextWeak.slice(0,3).join(', ')}</strong></span>
+        </div>
+        <div id="emailStatusArea"></div>
+        <div class="done-actions">
+          <button class="btn btn-gold" onclick="startNewExam()">✦ Générer le prochain examen</button>
+          <button class="btn btn-outline" onclick="goHome()">← Retour à l'accueil</button>
+        </div>
+      </div>`;
+
+    // Envoi email automatique
+    await sendResultEmail(examRecord, corrBody, conseils);
+
+  } catch(e) {
+    document.getElementById('correctionWrap').innerHTML = `
+      <div class="correction-result low">
+        <div class="corr-section-title">⚠️ Erreur</div>
+        <div class="corr-text">${e.message}\n\nVérifie ta connexion et ta clé API (bouton ⚙️ sur la page Révisions).</div>
+      </div>`;
+    document.getElementById('btnCorrect').disabled = false;
+    startExamTimer();
+  }
+}
+
+// ══════════════════════════════════════
+// ENVOI EMAIL
+// ══════════════════════════════════════
+async function sendResultEmail(examRecord, corrBody, conseils) {
+  const emails = [getEmail1(), getEmail2()].filter(e => e && e.includes('@'));
+  const area = document.getElementById('emailStatusArea');
+  if (!emails.length) return;
+
+  area.innerHTML = '<div class="email-status sending">📤 Envoi des résultats en cours...</div>';
+
+  const params = {
+    day_num:       'Examen Blanc n°' + examRecord.number,
+    topic:         'Chapitres : ' + (examRecord.focusSkills||[]).join(', '),
+    score:         examRecord.score + '/100',
+    duration:      examRecord.duration,
+    skills_detail: '✅ Points forts : ' + (examRecord.strongSkills||[]).join(', ') + '\n⚠️ À retravailler : ' + (examRecord.weakSkills||[]).join(', '),
+    strengths:     (examRecord.strongSkills||[]).join(', ') || '—',
+    weaknesses:    (examRecord.weakSkills||[]).join(', ') || 'Aucun — bravo !',
+    remedial_note: conseils ? 'Conseils : ' + conseils.slice(0, 200) : '—'
+  };
+
+  try {
+    await Promise.all(emails.map(email =>
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { ...params, to_email: email })
+    ));
+    area.innerHTML = '<div class="email-status sent">✅ Résultats envoyés à ' + emails.join(' et ') + '</div>';
+  } catch(e) {
+    area.innerHTML = '<div class="email-status error">❌ Erreur envoi email</div>';
+  }
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function goHome() {
+  stopExamTimer();
+  renderWeakBanner();
+  renderExamHistory();
+  updateHeader();
+  showScreen('sHome');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function fmtTime(s) {
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ══════════════════════════════════════
+// DÉMARRAGE
+// ══════════════════════════════════════
+if (getKey()) init();
+</script>
+</body>
+</html>
