@@ -432,7 +432,7 @@ async function generateExam(weakSkills,examNum){
     },
     body:JSON.stringify({
       model:'claude-sonnet-4-6',
-      max_tokens:3000,
+      max_tokens:6000,
       messages:[{role:'user',content:prompt}]
     })
   });
@@ -441,13 +441,37 @@ async function generateExam(weakSkills,examNum){
   if(data.error)throw new Error(data.error.message);
   var txt=data.content.map(function(b){return b.text||'';}).join('').trim();
 
-  // Nettoie les backticks et markdown si présents
-  txt=txt.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
-
-  var parsed=JSON.parse(txt);
-  parsed.id=Date.now();
-  parsed.number=examNum;
-  parsed.weakSkillsTargeted=weakSkills;
+  // Nettoyage robuste du JSON
+  txt=txt.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+  // Supprimer les caracteres de controle invalides dans les chaines JSON
+  txt=txt.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');
+  // Extraire le bloc JSON si entouré de texte
+  var jsonMatch=txt.match(/\{[\s\S]*\}/);
+  if(jsonMatch)txt=jsonMatch[0];
+  // Tenter le parse direct
+  var parsed;
+  try{
+    parsed=JSON.parse(txt);
+  }catch(e1){
+    // Tentative de réparation : tronquer au dernier exercice complet
+    try{
+      var truncated=txt;
+      // Trouver le dernier "}" complet avant la coupure
+      var lastGoodBrace=truncated.lastIndexOf(']}}');
+      if(lastGoodBrace<0)lastGoodBrace=truncated.lastIndexOf('}]');
+      if(lastGoodBrace>0){
+        truncated=truncated.slice(0,lastGoodBrace+3);
+        // Fermer les accolades/crochets manquants
+        var opens=(truncated.match(/\{/g)||[]).length-(truncated.match(/\}/g)||[]).length;
+        var openArr=(truncated.match(/\[/g)||[]).length-(truncated.match(/\]/g)||[]).length;
+        for(var ci=0;ci<openArr;ci++)truncated+=']'  ;
+        for(var ci=0;ci<opens;ci++)truncated+='}';
+      }
+      parsed=JSON.parse(truncated);
+    }catch(e2){
+      throw new Error('JSON invalide : '+e1.message);
+    }
+  }
   parsed.generated=new Date().toLocaleDateString('fr-FR');
   return parsed;
 }
