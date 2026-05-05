@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Examens Blancs ECE3 – EIB Paris</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 :root{--bg:#0c0c14;--surface:#13121e;--card:#1c1a2e;--accent:#e8445a;--accent2:#6c5ce7;--accent3:#00cec9;--gold:#fdcb6e;--text:#f0eeff;--muted:#8884aa;--border:#26233d;--correct:#00b894;--wrong:#d63031;--warn:#e17055;}
@@ -400,18 +403,23 @@ async function generateExam(weakSkills,examNum){
     +'Ex1 QCM culture mathematique (5 questions variees : calcul mental, conversions, ordres de grandeur) 5pts. '
     +'Ex2 Calcul numerique (fractions, priorites operatoires, nombres relatifs, puissances, notation scientifique) 12pts. '
     +'Ex3 Algebre (factorisation par mise en facteur commun, developpement, reduction, resolution equation 1er degre) 12pts. '
-    +'Ex4 Probleme (Pythagore/geometrie metrique, OU proportionnalite/pourcentages, OU probleme concret vitesse/masse volumique avec mise en equation) 17pts. '
+    +'Ex4 Probleme (Pythagore/geometrie metrique avec aires et perimetres, OU proportionnalite/pourcentages, OU probleme concret avec mise en equation) 17pts. '
     +'REGLES DE DIFFICULTE : valeurs entieres ou fractions simples, quelques questions accessibles et 1-2 questions exigeantes par exercice, equations du 1er degre uniquement, factorisations = mise en facteur commun seulement. '
     +'STYLE : contextes concrets et amusants, questions numerotees hierarchiquement (1., 1.a, 1.b...), toujours demander des justifications, preciser qu une demarche incomplete est valorisee. '
+    +'NOTATION MATHEMATIQUE OBLIGATOIRE : utilise la syntaxe LaTeX avec $ pour TOUTES les expressions mathematiques inline (exemples: $\\frac{3}{4}$, $2^3$, $\\sqrt{25}$, $3{,}2 \\times 10^{-4}$, $x+2=5$, $AB^2+BC^2=AC^2$). Ne jamais ecrire les maths en texte brut. '
+    +'FIGURES GEOMETRIQUES : pour les exercices de geometrie (Pythagore, triangles, rectangles, quadrillages), OBLIGATOIREMENT ajouter un champ figure dans l\'exercice JSON. '
+    +'Exemples de figures valides : '
+    +'triangle rectangle: {"type":"triangle","width":220,"height":160,"points":[[110,20],[20,140],[200,140]],"labels":[{"x":110,"y":12,"text":"A"},{"x":12,"y":152,"text":"B"},{"x":208,"y":152,"text":"C"}],"rightAngle":[200,140]} '
+    +'rectangle: {"type":"rectangle","width":220,"height":140,"x":20,"y":20,"w":180,"h":100,"labels":[{"x":110,"y":15,"text":"6 cm"},{"x":210,"y":70,"text":"4 cm"}]} '
+    +'quadrillage: {"type":"grid","width":190,"height":150,"cols":8,"rows":6,"cell":20,"shapes":[{"type":"polygon","points":[[1,1],[4,1],[4,4],[1,4]]},{"type":"point","x":1,"y":1,"label":"A"}]} '
     +'REPONDS UNIQUEMENT EN JSON VALIDE sans markdown ni backtick : '
     '{"title":"Examen Blanc n'+examNum+'",'
     +'"focusSkills":["s1","s2","s3"],'
     +'"totalPoints":48,'
     +'"duration":"30 minutes",'
-    +'"exercises":['
-    +'{"number":1,"title":"QCM","points":5,"skill":"calcul",'
+    +'"exercises":[{"number":1,"title":"QCM","points":5,"skill":"calcul","figure":null,'
     +'"instructions":"Choisir la bonne reponse",'
-    +'"questions":[{"num":"1.","text":"enonce","points":1}]}'
+    +'"questions":[{"num":"1.","text":"Calculer $3^2 + \\\\sqrt{16}$","points":1}]}'
     +']}';
 
   var resp=await fetch('https://api.anthropic.com/v1/messages',{
@@ -447,29 +455,77 @@ async function generateExam(weakSkills,examNum){
 // ═══════════════════════════════════════════════
 // AFFICHER EXAMEN
 // ═══════════════════════════════════════════════
+// ─────────────────────────────────────
+// RENDU MATH (KaTeX) + FIGURES (SVG)
+// ─────────────────────────────────────
+function renderMath(el){
+  if(window.renderMathInElement){
+    renderMathInElement(el,{delimiters:[
+      {left:"$$",right:"$$",display:true},
+      {left:"$",right:"$",display:false},
+      {left:"\\(",right:"\\)",display:false},
+      {left:"\\[",right:"\\]",display:true}
+    ],throwOnError:false});
+  }
+}
+
+function renderFigure(fig){
+  if(!fig||!fig.type)return "";
+  var w=fig.width||200,h=fig.height||160;
+  var svg='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:12px auto;background:#1c1a2e;border-radius:8px;border:1px solid #26233d">';
+  var stroke='stroke="#a09ec0" stroke-width="1.5" fill="none"';
+  if(fig.type==="triangle"&&fig.points&&fig.points.length===3){
+    var pts=fig.points.map(function(p){return p[0]+","+p[1];}).join(" ");
+    svg+='<polygon points="'+pts+'" '+stroke+' fill="rgba(232,68,90,0.08)"/>';
+    if(fig.labels){fig.labels.forEach(function(lb){svg+='<text x="'+lb.x+'" y="'+lb.y+'" fill="#f0eeff" font-size="13" text-anchor="middle" font-family="DM Sans,sans-serif">'+lb.text+'</text>';});}
+    if(fig.rightAngle){var ra=fig.rightAngle,s=8;svg+='<polyline points="'+( ra[0]+s)+","+ra[1]+" "+(ra[0]+s)+","+(ra[1]-s)+" "+ra[0]+","+(ra[1]-s)+'" stroke="#00cec9" stroke-width="1.5" fill="none"/>'}
+  }else if(fig.type==="rectangle"){
+    var rx=fig.x||20,ry=fig.y||20,rw=fig.w||160,rh=fig.h||100;
+    svg+='<rect x="'+rx+'" y="'+ry+'" width="'+rw+'" height="'+rh+'" '+stroke+' fill="rgba(108,92,231,0.08)"/>';
+    if(fig.labels){fig.labels.forEach(function(lb){svg+='<text x="'+lb.x+'" y="'+lb.y+'" fill="#f0eeff" font-size="13" text-anchor="middle" font-family="DM Sans,sans-serif">'+lb.text+'</text>';});}
+  }else if(fig.type==="circle"){
+    var cx=fig.cx||w/2,cy=fig.cy||h/2,cr=fig.r||60;
+    svg+='<circle cx="'+cx+'" cy="'+cy+'" r="'+cr+'" '+stroke+' fill="rgba(0,206,201,0.08)"/>';
+    if(fig.labels){fig.labels.forEach(function(lb){svg+='<text x="'+lb.x+'" y="'+lb.y+'" fill="#f0eeff" font-size="13" text-anchor="middle" font-family="DM Sans,sans-serif">'+lb.text+'</text>';});}
+  }else if(fig.type==="grid"){
+    var cols=fig.cols||8,rows=fig.rows||6,cell=fig.cell||20;
+    for(var gi=0;gi<=cols;gi++)svg+='<line x1="'+( 10+gi*cell)+'" y1="10" x2="'+( 10+gi*cell)+'" y2="'+( 10+rows*cell)+'" stroke="#26233d" stroke-width="1"/>';
+    for(var gj=0;gj<=rows;gj++)svg+='<line x1="10" y1="'+( 10+gj*cell)+'" x2="'+( 10+cols*cell)+'" y2="'+( 10+gj*cell)+'" stroke="#26233d" stroke-width="1"/>';
+    if(fig.shapes){fig.shapes.forEach(function(s){
+      if(s.type==="polygon"){var spts=s.points.map(function(p){return(10+p[0]*cell)+","+(10+p[1]*cell);}).join(" ");svg+='<polygon points="'+spts+'" stroke="#e8445a" stroke-width="1.5" fill="rgba(232,68,90,0.15)"/>'}
+      if(s.type==="point"){svg+='<circle cx="'+( 10+s.x*cell)+'" cy="'+( 10+s.y*cell)+'" r="3" fill="#fdcb6e"/>';if(s.label)svg+='<text x="'+( 10+s.x*cell+8)+'" y="'+( 10+s.y*cell+4)+'" fill="#fdcb6e" font-size="11">'+s.label+'</text>';}
+    });}
+  }
+  svg+="</svg>";
+  return '<div class="fig-wrap">'+svg+"</div>";
+}
+
 function renderExam(exam){
-  document.getElementById('examTitle').textContent=exam.title||'Examen Blanc';
-  document.getElementById('examSubtitle').textContent='Chapitres : '+(exam.focusSkills||[]).join(', ');
-  document.getElementById('examMetaChips').innerHTML=
+  document.getElementById("examTitle").textContent=exam.title||"Examen";
+  document.getElementById("examMetaChips").innerHTML=
     '<span class="meta-chip">⏱ ~30 minutes</span>'+
     '<span class="meta-chip">🚫 Sans calculatrice</span>'+
-    '<span class="meta-chip">📊 '+(exam.totalPoints||100)+' points</span>'+
-    (exam.focusSkills||[]).map(function(s){return'<span class="meta-chip focus">🎯 '+s+'</span>';}).join('');
+    '<span class="meta-chip">📝 '+(exam.totalPoints||48)+' points</span>'+
+    (exam.focusSkills||[]).map(function(s){return '<span class="meta-chip">'+s+'</span>';}).join("");
 
-  document.getElementById('examExercises').innerHTML=(exam.exercises||[]).map(function(ex){
+  document.getElementById("examExercises").innerHTML=(exam.exercises||[]).map(function(ex){
+    var figHtml=ex.figure?renderFigure(ex.figure):"";
     return '<div class="ex-card">'+
       '<div class="ex-header"><span class="ex-badge">Exercice '+ex.number+'</span><span class="ex-pts">'+ex.points+' pts</span></div>'+
-      '<div class="ex-text"><strong>'+ex.title+'</strong>'+(ex.instructions?'\n'+ex.instructions:'')+'</div>'+
+      '<div class="ex-text"><strong>'+ex.title+'</strong>'+(ex.instructions?'<br>'+ex.instructions.replace(/\n/g,"<br>"):"")+'</div>'+
+      figHtml+
       (ex.questions||[]).map(function(q){
-        return '<div class="q-card"><div class="q-num">'+q.num+' — '+q.points+' pt'+(q.points>1?'s':'')+'</div>'+
-          '<div class="q-text">'+(q.text||'').replace(/\n/g,'<br>')+'</div></div>';
-      }).join('')+
-      '</div>';
-  }).join('');
+        var qFig=q.figure?renderFigure(q.figure):"";
+        return '<div class="q-card"><div class="q-num">'+q.num+' → '+q.points+' pt'+(q.points>1?"s":"")+'</div>'+
+          qFig+
+          '<div class="q-text">'+(q.text||"").replace(/\n/g,"<br>")+'</div></div>';
+      }).join("")+
+      "</div>";
+  }).join("");
 
-  document.getElementById('photoPreviewArea').innerHTML='';
-  document.getElementById('correctionWrap').innerHTML='';
-  document.getElementById('btnCorrect').disabled=false;
+  setTimeout(function(){renderMath(document.getElementById("examExercises"));},100);
+  window.exam=exam;
+  saveExamToStorage();
 }
 
 // ═══════════════════════════════════════════════
