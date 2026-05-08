@@ -244,21 +244,50 @@ async function githubSave(){
   }catch(e){console.warn('[GH]',e.message);return false;}
 }
 
-function showSaveIndicator(status){
-  var el=document.getElementById('ghSI');
-  if(!el){el=document.createElement('div');el.id='ghSI';el.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;padding:8px 16px;border-radius:100px;font-size:12px;font-family:sans-serif;border:1px solid;transition:opacity 0.3s;';document.body.appendChild(el);}
-  var m={saving:{bg:'rgba(108,92,231,0.15)',b:'rgba(108,92,231,0.4)',c:'#a29bfe',t:'Sauvegarde...'},saved:{bg:'rgba(0,184,148,0.12)',b:'rgba(0,184,148,0.4)',c:'#6ee7b7',t:'Sauvegarde OK'},error:{bg:'rgba(214,48,49,0.12)',b:'rgba(214,48,49,0.4)',c:'#fca5a5',t:'Erreur'}}[status];
-  el.style.background=m.bg;el.style.borderColor=m.b;el.style.color=m.c;el.textContent=m.t;el.style.opacity='1';
-  if(status!=='saving')setTimeout(function(){el.style.opacity='0';},3000);
+function showSaveIndicator(status, errorMsg){
+var el=document.getElementById('ghSI');
+if(!el){el=document.createElement('div');el.id='ghSI';el.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;padding:8px 16px;border-radius:100px;font-size:12px;font-family:sans-serif;border:1px solid;transition:opacity 0.3s;cursor:pointer;';document.body.appendChild(el);}
+var m={saving:{bg:'rgba(108,92,231,0.15)',b:'rgba(108,92,231,0.4)',c:'#a29bfe',t:'Sauvegarde...'},saved:{bg:'rgba(0,184,148,0.12)',b:'rgba(0,184,148,0.4)',c:'#6ee7b7',t:'Sauvegardé ☁️'},error:{bg:'rgba(214,48,49,0.12)',b:'rgba(214,48,49,0.4)',c:'#fca5a5',t:'⚠ Erreur sauvegarde'+(errorMsg?' — clic pour détails':'')}}[status];
+el.style.background=m.bg;el.style.borderColor=m.b;el.style.color=m.c;el.textContent=m.t;el.style.opacity='1';
+if(status==='error'&&errorMsg){el.title=errorMsg;el.onclick=function(){alert('Erreur sauvegarde GitHub :\n\n'+errorMsg+'\n\nVérifie ton token GitHub via le bouton ⚙️ sur la page Révisions.');};}
+else{el.title='';el.onclick=null;}
+if(status==='saved')setTimeout(function(){el.style.opacity='0';},3000);
 }
 
-async function githubSaveWithIndicator(){showSaveIndicator('saving');var ok=await githubSave();showSaveIndicator(ok?'saved':'error');return ok;}
+async function githubSaveWithIndicator(){showSaveIndicator('saving');try{var ok=await githubSave();if(ok){showSaveIndicator('saved');return true;}showSaveIndicator('error','Sauvegarde échouée — token invalide ou problème réseau.');return false;}catch(e){showSaveIndicator('error',e.message||'Erreur inconnue');return false;}}
+
+async function githubVerifyToken(){
+var token=getGHToken();
+if(!token)return {ok:false,reason:'no_token',msg:'Aucun token GitHub configuré.'};
+try{
+var r=await fetch('https://api.github.com/user',{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+if(r.status===401)return {ok:false,reason:'bad_credentials',msg:'Token GitHub invalide ou expiré.'};
+if(!r.ok)return {ok:false,reason:'http_'+r.status,msg:'Erreur GitHub HTTP '+r.status};
+return {ok:true};
+}catch(e){return {ok:false,reason:'network',msg:'Erreur réseau : '+e.message};}
+}
+
+function showGithubWarningBanner(msg,actionLabel,actionHref){
+var existing=document.getElementById('ghWarnBanner');
+if(existing)existing.remove();
+var el=document.createElement('div');
+el.id='ghWarnBanner';
+el.style.cssText='position:sticky;top:0;z-index:300;background:rgba(214,48,49,0.18);border-bottom:1.5px solid rgba(214,48,49,0.5);color:#fca5a5;padding:10px 20px;font-family:DM Sans,sans-serif;font-size:13px;text-align:center;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;';
+el.innerHTML='<span>⚠️ Sauvegarde GitHub désactivée — '+msg+'</span>'+(actionLabel?'<a href="'+actionHref+'" style="color:#fca5a5;text-decoration:underline;font-weight:600">'+actionLabel+'</a>':'')+'<button onclick="document.getElementById(\'ghWarnBanner\').remove()" style="background:none;border:1px solid rgba(252,165,165,0.4);color:#fca5a5;padding:2px 10px;border-radius:8px;cursor:pointer;font-size:11px">Ignorer</button>';
+document.body.insertBefore(el,document.body.firstChild);
+}
 
 async function initGithubBackup(cb){
-  var token=getGHToken();
-  if(!token){if(cb)cb(false);return;}
-  var ok=await githubLoad();
-  if(cb)cb(ok);
+var token=getGHToken();
+if(!token){if(cb)cb(false);return;}
+var verify=await githubVerifyToken();
+if(!verify.ok){
+console.warn('[GitHub] Token invalide :',verify.msg);
+showGithubWarningBanner(verify.msg,'Modifier le token','index.html');
+if(cb)cb(false);return;
+}
+var ok=await githubLoad();
+if(cb)cb(ok);
 }
 
 // ═══════════════════════════════════════════════
@@ -294,22 +323,52 @@ var timerSecs = 0;
 // ANALYSE POINTS FAIBLES
 // ═══════════════════════════════════════════════
 function getWeakSkills(){
-  var prog=getProg()||{};
-  var skillMap={};
-  Object.values(prog).forEach(function(p){
-    if(p&&p.skills){
-      Object.entries(p.skills).forEach(function(entry){
-        var skill=entry[0],score=entry[1];
-        if(!skillMap[skill]||score<skillMap[skill])skillMap[skill]=score;
-      });
-    }
-  });
-  (exams||[]).forEach(function(e){
-    if(e&&e.weakSkills)e.weakSkills.forEach(function(s){
-      if(!skillMap[s])skillMap[s]=40;
-    });
-  });
-  return Object.entries(skillMap).map(function(e){return{skill:e[0],score:e[1]};}).sort(function(a,b){return a.score-b.score;});
+var prog=getProg()||{};
+var skillData={};
+function addScore(skill,score,source){
+if(!skill)return;
+if(!skillData[skill])skillData[skill]={scores:[],sources:[]};
+skillData[skill].scores.push(score);
+skillData[skill].sources.push(source);
+}
+Object.values(prog).forEach(function(p){
+if(p&&p.skills){
+Object.entries(p.skills).forEach(function(entry){
+addScore(entry[0],entry[1],'rev');
+});
+}
+});
+var examList=(exams||[]).slice();
+examList.forEach(function(e,idx){
+var recency=idx+1;
+if(e&&e.weakSkills){
+e.weakSkills.forEach(function(s){
+var estScore=Math.max(20,45-recency*3);
+addScore(s,estScore,'exam_weak');
+});
+}
+if(e&&e.strongSkills){
+e.strongSkills.forEach(function(s){
+addScore(s,75+Math.min(15,recency*2),'exam_strong');
+});
+}
+});
+return Object.entries(skillData).map(function(entry){
+var skill=entry[0],data=entry[1];
+var revScores=data.scores.filter(function(_,i){return data.sources[i]==='rev';});
+var examScores=data.scores.filter(function(_,i){return data.sources[i]!=='rev';});
+var score;
+if(revScores.length&&examScores.length){
+var revMin=Math.min.apply(null,revScores);
+var examAvg=examScores.reduce(function(a,b){return a+b;},0)/examScores.length;
+score=Math.round((revMin+examAvg)/2);
+}else if(revScores.length){
+score=Math.min.apply(null,revScores);
+}else{
+score=Math.round(examScores.reduce(function(a,b){return a+b;},0)/examScores.length);
+}
+return {skill:skill,score:score};
+}).sort(function(a,b){return a.score-b.score;});
 }
 
 function getTopWeakSkills(n){
@@ -394,7 +453,19 @@ async function startNewExam(){
 
 async function generateExam(weakSkills,examNum){
   var skillsList=weakSkills.length>0?weakSkills.join(', '):'Calcul, Fractions, Pythagore, Equations';
-  var prevCtx=exams.length>0?' Examen precedent: '+exams[exams.length-1].score+'/100.':' Premier examen.';
+  var examHistorySummary='';
+if(exams.length>0){
+var recent=exams.slice(-3);
+examHistorySummary=' Historique recent ('+recent.length+' dernier'+(recent.length>1?'s':'')+' examen'+(recent.length>1?'s':'')+'): '+recent.map(function(e){
+return 'Examen #'+e.number+' ('+(e.date||'')+'): '+e.score+'/100, points faibles ['+(e.weakSkills||[]).slice(0,3).join(', ')+'], points forts ['+(e.strongSkills||[]).slice(0,3).join(', ')+']';
+}).join(' | ')+'.';
+}
+var recurrentWeak={};
+(exams||[]).slice(-3).forEach(function(e){if(e&&e.weakSkills)e.weakSkills.forEach(function(s){recurrentWeak[s]=(recurrentWeak[s]||0)+1;});});
+var priority=Object.entries(recurrentWeak).filter(function(e){return e[1]>=2;}).map(function(e){return e[0];});
+var priorityCtx=priority.length>0?' PRIORITE ABSOLUE - skills faibles recurrents (presents dans plusieurs examens): '+priority.join(', ')+'.':'';
+var prevCtx=examHistorySummary+priorityCtx;
+if(!prevCtx)prevCtx=' Premier examen.';
 
   var prompt='Tu es professeur de mathematiques au College Francais (niveau 4eme, programme EIB Paris). '
     +'Tu generes un examen SANS calculatrice de 30 minutes, inspire des sujets ECE3 authentiques de l\'EIB Paris. '
