@@ -1,0 +1,31 @@
+{
+  "savedAt": "2026-05-09T09:07:18.310Z",
+  "eib_exams_v1": [
+    {
+      "id": 1778011254376,
+      "number": 1,
+      "title": "Examen Blanc n1",
+      "focusSkills": [
+        "Calcul",
+        "Fractions",
+        "Pythagore",
+        "Equations"
+      ],
+      "score": 50,
+      "weakSkills": [],
+      "strongSkills": [],
+      "duration": "18:17",
+      "date": "05/05/2026"
+    },
+    {
+      "id": 1778317638305,
+      "title": "Examen ECE3 – Collège Français EIB Paris – 4ème",
+      "focusSkills": [],
+      "score": 50,
+      "weakSkills": [],
+      "strongSkills": [],
+      "duration": "33:55",
+      "date": "09/05/2026"
+    }
+  ]
+}
