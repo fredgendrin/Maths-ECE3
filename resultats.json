@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-05-09T09:07:18.310Z",
+  "savedAt": "2026-05-11T17:10:41.285Z",
   "eib_exams_v1": [
     {
       "id": 1778011254376,
@@ -19,13 +19,23 @@
     },
     {
       "id": 1778317638305,
-      "title": "Examen ECE3 – Collège Français EIB Paris – 4ème",
+      "title": "Examen ECE3 â CollÃ¨ge FranÃ§ais EIB Paris â 4Ã¨me",
       "focusSkills": [],
       "score": 50,
       "weakSkills": [],
       "strongSkills": [],
       "duration": "33:55",
       "date": "09/05/2026"
+    },
+    {
+      "id": 1778519441283,
+      "title": "Contrôle de Mathématiques – 4ème EIB",
+      "focusSkills": [],
+      "score": 50,
+      "weakSkills": [],
+      "strongSkills": [],
+      "duration": "19:45",
+      "date": "11/05/2026"
     }
   ]
 }
